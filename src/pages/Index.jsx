@@ -72,35 +72,35 @@ const Index = () => {
             className="text-sm"
             onClick={() => setActiveFilter('Inbox')}
           >
-            <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1 text-xs">{counts.Inbox}</span>
+            <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
           </Button>
           <Button
             variant={activeFilter === 'Pending' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Pending')}
           >
-            <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1 text-xs">{counts.Pending}</span>
+            <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1">{counts.Pending}</span>
           </Button>
           <Button
             variant={activeFilter === 'Completed' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Completed')}
           >
-            <CheckCircle className="w-4 h-4 mr-2" /> Completed <span className="ml-1 text-xs">{counts.Completed}</span>
+            <CheckCircle className="w-4 h-4 mr-2" /> Completed <span className="ml-1">{counts.Completed}</span>
           </Button>
           <Button
             variant={activeFilter === 'Draft' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Draft')}
           >
-            <FileText className="w-4 h-4 mr-2" /> Draft <span className="ml-1 text-xs">{counts.Draft}</span>
+            <FileText className="w-4 h-4 mr-2" /> Draft <span className="ml-1">{counts.Draft}</span>
           </Button>
           <Button
             variant={activeFilter === 'All' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('All')}
           >
-            All <span className="ml-1 text-xs">{counts.All}</span>
+            All <span className="ml-1">{counts.All}</span>
           </Button>
         </div>
         <Table>
