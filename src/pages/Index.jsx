@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Index = () => {
   const [documents] = useState([
@@ -67,20 +68,30 @@ const Index = () => {
 
       <main className="flex-grow container mx-auto p-4">
         <div className="flex space-x-2 mb-4">
-          <Button
-            variant={activeFilter === 'Inbox' ? 'default' : 'secondary'}
-            className="text-sm"
-            onClick={() => setActiveFilter('Inbox')}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
-          </Button>
-          <Button
-            variant={activeFilter === 'Pending' ? 'default' : 'secondary'}
-            className="text-sm"
-            onClick={() => setActiveFilter('Pending')}
+            <Button
+              variant={activeFilter === 'Inbox' ? 'default' : 'secondary'}
+              className="text-sm"
+              onClick={() => setActiveFilter('Inbox')}
+            >
+              <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
+            </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1">{counts.Pending}</span>
-          </Button>
+            <Button
+              variant={activeFilter === 'Pending' ? 'default' : 'secondary'}
+              className="text-sm"
+              onClick={() => setActiveFilter('Pending')}
+            >
+              <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1">{counts.Pending}</span>
+            </Button>
+          </motion.div>
           <Button
             variant={activeFilter === 'Completed' ? 'default' : 'secondary'}
             className="text-sm"
@@ -103,19 +114,32 @@ const Index = () => {
             All <span className="ml-1">{counts.All}</span>
           </Button>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-muted-foreground">Created</TableHead>
-              <TableHead className="text-muted-foreground">Title</TableHead>
-              <TableHead className="text-muted-foreground">Recipient</TableHead>
-              <TableHead className="text-muted-foreground">Status</TableHead>
-              <TableHead className="text-muted-foreground">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredDocuments.map((doc) => (
-              <TableRow key={doc.id}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFilter}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-muted-foreground">Created</TableHead>
+                  <TableHead className="text-muted-foreground">Title</TableHead>
+                  <TableHead className="text-muted-foreground">Recipient</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
+                  <TableHead className="text-muted-foreground">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredDocuments.map((doc, index) => (
+                  <motion.tr
+                    key={doc.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                  >
                 <TableCell className="text-muted-foreground">{doc.created}</TableCell>
                 <TableCell>{doc.title}</TableCell>
                 <TableCell>
@@ -160,10 +184,12 @@ const Index = () => {
                     </Button>
                   )}
                 </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </motion.div>
+        </AnimatePresence>
         <div className="flex justify-between items-center mt-4 text-muted-foreground">
           <p>Showing {filteredDocuments.length} results.</p>
           <div className="flex items-center space-x-2">
