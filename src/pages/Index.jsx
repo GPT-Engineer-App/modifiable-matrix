@@ -176,15 +176,15 @@ const Index = () => {
       </main>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-card text-card-foreground">
+        <DialogContent className="bg-background text-foreground">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Recipient Information</DialogTitle>
+            <DialogTitle>Recipient Information</DialogTitle>
           </DialogHeader>
           {selectedRecipient && recipientInfo[selectedRecipient] && (
             <div className="mt-4 space-y-2">
-              <p><strong className="text-muted-foreground">Name:</strong> <span className="text-foreground">{recipientInfo[selectedRecipient].name}</span></p>
-              <p><strong className="text-muted-foreground">Email:</strong> <span className="text-foreground">{recipientInfo[selectedRecipient].email}</span></p>
-              <p><strong className="text-muted-foreground">Department:</strong> <span className="text-foreground">{recipientInfo[selectedRecipient].department}</span></p>
+              <p><strong className="text-muted-foreground">Name:</strong> <span>{recipientInfo[selectedRecipient].name}</span></p>
+              <p><strong className="text-muted-foreground">Email:</strong> <span>{recipientInfo[selectedRecipient].email}</span></p>
+              <p><strong className="text-muted-foreground">Department:</strong> <span>{recipientInfo[selectedRecipient].department}</span></p>
             </div>
           )}
         </DialogContent>
