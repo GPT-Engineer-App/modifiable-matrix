@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 const API_KEY = 'api_4qwsyh7glv5mym3a';
 
 const fetchDocuments = async () => {
-  const response = await fetch('https://api.documenso.com/api/v1/documents', {
+  const response = await fetch('https://app.documenso.com/api/v1/documents', {
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
     },
