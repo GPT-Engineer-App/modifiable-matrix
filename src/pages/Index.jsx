@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
 
 const Index = () => {
   const [documents] = useState([
@@ -13,6 +13,7 @@ const Index = () => {
     { id: 5, created: '20/02/2024, 2:19 pm', title: 'Retainer Agreement IMS', recipient: 'OM, HR', status: 'Completed', action: 'Download' },
   ]);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const filteredDocuments = useMemo(() => {
     if (activeFilter === 'All') return documents;
@@ -113,8 +114,23 @@ const Index = () => {
                 </TableCell>
                 <TableCell>
                   {doc.action && (
-                    <Button variant="secondary" size="sm">
-                      {doc.action}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        if (doc.action === 'Download') {
+                          setDownloadingId(doc.id);
+                          setTimeout(() => {
+                            setDownloadingId(null);
+                          }, 2000); // Simulating download for 2 seconds
+                        }
+                      }}
+                      disabled={downloadingId === doc.id}
+                    >
+                      {downloadingId === doc.id ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : null}
+                      {downloadingId === doc.id ? 'Downloading...' : doc.action}
                     </Button>
                   )}
                 </TableCell>
