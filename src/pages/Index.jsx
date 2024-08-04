@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,10 +7,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 
-const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+const saveApiKey = (key) => {
+  localStorage.setItem('documenso_api_key', key);
+};
+
+const loadApiKey = () => {
+  return localStorage.getItem('documenso_api_key');
+};
 
 const fetchDocuments = async ({ queryKey }) => {
-  const [_, page, perPage] = queryKey;
+  const [_, page, perPage, apiKey] = queryKey;
   const apiUrl = `https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`;
   try {
     const response = await fetch(apiUrl, {
@@ -32,11 +38,29 @@ const fetchDocuments = async ({ queryKey }) => {
 const Index = () => {
   const [page, setPage] = useState(1);
   const perPage = 20;
+  const [apiKey, setApiKey] = useState(loadApiKey());
+  const [showApiKeyInput, setShowApiKeyInput] = useState(!apiKey);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['documents', page, perPage],
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['documents', page, perPage, apiKey],
     queryFn: fetchDocuments,
+    enabled: !!apiKey,
   });
+
+  const handleApiKeySubmit = (e) => {
+    e.preventDefault();
+    const newApiKey = e.target.apiKey.value;
+    setApiKey(newApiKey);
+    saveApiKey(newApiKey);
+    setShowApiKeyInput(false);
+    refetch();
+  };
+
+  useEffect(() => {
+    if (!apiKey) {
+      setShowApiKeyInput(true);
+    }
+  }, [apiKey]);
 
   const documents = useMemo(() => {
     if (!data || !data.documents) return [];
@@ -84,6 +108,18 @@ const Index = () => {
     Draft: documents.filter(doc => doc.status === 'Draft').length,
   }), [documents]);
 
+  if (showApiKeyInput) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
+        <form onSubmit={handleApiKeySubmit} className="space-y-4">
+          <h2 className="text-2xl font-bold mb-4">Enter your Documenso API Key</h2>
+          <Input type="text" name="apiKey" placeholder="API Key" defaultValue={apiKey || ''} required />
+          <Button type="submit">Submit</Button>
+        </form>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
@@ -102,7 +138,7 @@ const Index = () => {
           <p className="text-sm text-muted-foreground mb-4">
             This could be due to an invalid API key or network issues. Please check your API key and try again.
           </p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
+          <Button onClick={() => setShowApiKeyInput(true)}>Update API Key</Button>
         </div>
       </div>
     );
