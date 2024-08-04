@@ -220,7 +220,7 @@ const Index = () => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="max-h-[calc(100vh-300px)] overflow-auto">
+            <div className="max-h-[calc(100vh-300px)] overflow-auto custom-scrollbar">
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
