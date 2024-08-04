@@ -121,18 +121,20 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
+            className="overflow-hidden"
           >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-muted-foreground">Created</TableHead>
-                  <TableHead className="text-muted-foreground">Title</TableHead>
-                  <TableHead className="text-muted-foreground">Recipient</TableHead>
-                  <TableHead className="text-muted-foreground">Status</TableHead>
-                  <TableHead className="text-muted-foreground">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="max-h-[calc(100vh-300px)] overflow-auto">
+              <Table className="w-full">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Created</TableHead>
+                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Title</TableHead>
+                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Recipient</TableHead>
+                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Status</TableHead>
+                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                 {filteredDocuments.map((doc, index) => (
                   <motion.tr
                     key={doc.id}
