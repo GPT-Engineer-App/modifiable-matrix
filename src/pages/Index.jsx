@@ -17,20 +17,18 @@ const loadApiKey = () => {
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage, apiKey] = queryKey;
-  const apiUrl = `https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`;
-  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
   try {
-    const response = await fetch(proxyUrl + apiUrl, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
+    // Simulated API response
+    const simulatedData = {
+      documents: Array.from({ length: perPage }, (_, index) => ({
+        id: `doc-${index + 1}`,
+        title: `Document ${index + 1}`,
+        createdAt: new Date().toISOString(),
+        status: ['DRAFT', 'PENDING', 'COMPLETED'][Math.floor(Math.random() * 3)],
+      })),
+      totalPages: 5,
+    };
+    return simulatedData;
   } catch (error) {
     console.error('Error fetching documents:', error);
     throw error;
@@ -46,7 +44,7 @@ const Index = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['documents', page, perPage, apiKey],
     queryFn: ({ queryKey }) => fetchDocuments({ queryKey }),
-    enabled: !!apiKey,
+    enabled: true, // Always enabled now that we're using simulated data
   });
 
   const handleApiKeySubmit = (e) => {
