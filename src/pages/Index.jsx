@@ -8,28 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 
-const saveApiKey = (key) => {
-  localStorage.setItem('documenso_api_key', key);
-};
-
-const loadApiKey = () => {
-  return localStorage.getItem('documenso_api_key');
-};
-
 const fetchDocuments = async ({ queryKey }) => {
-  const [_, page, perPage, apiKey] = queryKey;
+  const [_, page, perPage] = queryKey;
   try {
-    // Simulated API response
-    const simulatedData = {
-      documents: Array.from({ length: perPage }, (_, index) => ({
-        id: `doc-${index + 1}`,
-        title: `Document ${index + 1}`,
-        createdAt: new Date().toISOString(),
-        status: ['DRAFT', 'PENDING', 'COMPLETED'][Math.floor(Math.random() * 3)],
-      })),
-      totalPages: 5,
-    };
-    return simulatedData;
+    const response = await fetch(`https://express-hello-world-6wub.onrender.com/documents?page=${page}&perPage=${perPage}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
   } catch (error) {
     console.error('Error fetching documents:', error);
     throw error;
@@ -39,29 +25,11 @@ const fetchDocuments = async ({ queryKey }) => {
 const Index = () => {
   const [page, setPage] = useState(1);
   const perPage = 20;
-  const [apiKey, setApiKey] = useState(loadApiKey());
-  const [showApiKeyInput, setShowApiKeyInput] = useState(!apiKey);
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['documents', page, perPage, apiKey],
-    queryFn: ({ queryKey }) => fetchDocuments({ queryKey }),
-    enabled: true, // Always enabled now that we're using simulated data
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['documents', page, perPage],
+    queryFn: fetchDocuments,
   });
-
-  const handleApiKeySubmit = (e) => {
-    e.preventDefault();
-    const newApiKey = e.target.apiKey.value;
-    setApiKey(newApiKey);
-    saveApiKey(newApiKey);
-    setShowApiKeyInput(false);
-    refetch();
-  };
-
-  useEffect(() => {
-    if (!apiKey) {
-      setShowApiKeyInput(true);
-    }
-  }, [apiKey]);
 
   const documents = useMemo(() => {
     if (!data || !data.documents) return [];
@@ -111,17 +79,6 @@ const Index = () => {
     Draft: documents.filter(doc => doc.status === 'Draft').length,
   }), [documents]);
 
-  if (showApiKeyInput) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
-        <form onSubmit={handleApiKeySubmit} className="space-y-4">
-          <h2 className="text-2xl font-bold mb-4">Enter your Documenso API Key</h2>
-          <Input type="text" name="apiKey" placeholder="API Key" defaultValue={apiKey || ''} required />
-          <Button type="submit">Submit</Button>
-        </form>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -162,7 +119,6 @@ const Index = () => {
           <div className="flex items-center space-x-4">
             <Input type="text" placeholder="Search" className="w-64 bg-secondary" />
             <Button variant="outline" className="bg-secondary text-secondary-foreground">HR</Button>
-            <Button variant="outline" onClick={() => setIsApiKeyDialogOpen(true)}>View API Key</Button>
           </div>
         </div>
       </header>
@@ -333,35 +289,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isApiKeyDialogOpen} onOpenChange={setIsApiKeyDialogOpen}>
-        <DialogContent className="bg-background text-foreground">
-          <DialogHeader>
-            <DialogTitle>Your API Key</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center space-x-2">
-              <Input
-                type={showApiKey ? "text" : "password"}
-                value={apiKey}
-                readOnly
-                className="flex-grow"
-              />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setShowApiKey(!showApiKey)}
-              >
-                {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsApiKeyDialogOpen(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
