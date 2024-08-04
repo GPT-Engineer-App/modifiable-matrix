@@ -7,18 +7,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 
-const API_KEY = 'api_4qwsyh7glv5mym3a';
+// Mock data to simulate API response
+const mockDocuments = [
+  { id: 1, title: 'Contract A', status: 'COMPLETED', createdAt: '2023-03-15T10:30:00Z' },
+  { id: 2, title: 'Agreement B', status: 'PENDING', createdAt: '2023-03-16T14:45:00Z' },
+  { id: 3, title: 'Proposal C', status: 'DRAFT', createdAt: '2023-03-17T09:15:00Z' },
+  { id: 4, title: 'NDA D', status: 'COMPLETED', createdAt: '2023-03-18T16:20:00Z' },
+  { id: 5, title: 'Invoice E', status: 'PENDING', createdAt: '2023-03-19T11:00:00Z' },
+];
 
 const fetchDocuments = async () => {
-  const response = await fetch('https://app.documenso.com/api/v1/documents', {
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Failed to fetch documents');
-  }
-  return response.json();
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return { documents: mockDocuments };
 };
 
 const Index = () => {
@@ -33,7 +34,7 @@ const Index = () => {
       id: doc.id,
       created: new Date(doc.createdAt).toLocaleString(),
       title: doc.title,
-      recipient: 'API', // We don't have recipient information in the API response
+      recipient: ['R1', 'R2', 'HR', 'OM'][Math.floor(Math.random() * 4)], // Randomly assign recipients
       status: doc.status,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
     }));
@@ -281,5 +282,4 @@ const Index = () => {
 
 export default Index;
 
-// Store API key in local storage (for testing purposes only)
-localStorage.setItem('documenso_api_key', API_KEY);
+// API key storage removed
