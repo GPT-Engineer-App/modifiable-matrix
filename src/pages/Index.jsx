@@ -7,22 +7,26 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 
-const API_KEY = 'api_4qwsyh7glv5mym3a';
+const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
-  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
   const apiUrl = `https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`;
-  const response = await fetch(corsProxy + apiUrl, {
-    headers: {
-      'Authorization': API_KEY,
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+  try {
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching documents:', error);
+    throw error;
   }
-  return response.json();
 };
 
 const Index = () => {
@@ -95,17 +99,9 @@ const Index = () => {
         <div className="text-center max-w-md">
           <h2 className="text-2xl font-bold text-red-500 mb-4">Error Loading Documents</h2>
           <p className="text-muted-foreground mb-4">{error.message}</p>
-          {error.response && (
-            <div className="bg-secondary p-4 rounded-md mb-4 text-left">
-              <p className="font-semibold">Status: {error.response.status}</p>
-              <p className="font-semibold">Status Text: {error.response.statusText}</p>
-              {error.response.data && (
-                <pre className="mt-2 text-sm overflow-auto">
-                  {JSON.stringify(error.response.data, null, 2)}
-                </pre>
-              )}
-            </div>
-          )}
+          <p className="text-sm text-muted-foreground mb-4">
+            This could be due to an invalid API key or network issues. Please check your API key and try again.
+          </p>
           <Button onClick={() => window.location.reload()}>Retry</Button>
         </div>
       </div>
