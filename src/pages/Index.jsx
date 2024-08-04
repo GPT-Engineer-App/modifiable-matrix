@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const Index = () => {
   const [documents] = useState([
@@ -14,6 +15,20 @@ const Index = () => {
   ]);
   const [activeFilter, setActiveFilter] = useState('All');
   const [downloadingId, setDownloadingId] = useState(null);
+  const [selectedRecipient, setSelectedRecipient] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const recipientInfo = {
+    R1: { name: "Robert Smith", email: "robert.smith@example.com", department: "Sales" },
+    R2: { name: "Emma Johnson", email: "emma.johnson@example.com", department: "Marketing" },
+    HR: { name: "Human Resources", email: "hr@example.com", department: "Human Resources" },
+    OM: { name: "Operations Manager", email: "operations@example.com", department: "Operations" },
+  };
+
+  const handleRecipientClick = (recipient) => {
+    setSelectedRecipient(recipient);
+    setIsModalOpen(true);
+  };
 
   const filteredDocuments = useMemo(() => {
     if (activeFilter === 'All') return documents;
@@ -102,7 +117,17 @@ const Index = () => {
               <TableRow key={doc.id}>
                 <TableCell className="text-muted-foreground">{doc.created}</TableCell>
                 <TableCell>{doc.title}</TableCell>
-                <TableCell className="text-muted-foreground">{doc.recipient}</TableCell>
+                <TableCell>
+                  {doc.recipient.split(', ').map((recipient, index) => (
+                    <span
+                      key={index}
+                      className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200"
+                      onClick={() => handleRecipientClick(recipient)}
+                    >
+                      {recipient}{index < doc.recipient.split(', ').length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                </TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     doc.status === 'Completed' ? 'bg-green-500/20 text-green-500' :
@@ -149,6 +174,21 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recipient Information</DialogTitle>
+          </DialogHeader>
+          {selectedRecipient && recipientInfo[selectedRecipient] && (
+            <div className="mt-4">
+              <p><strong>Name:</strong> {recipientInfo[selectedRecipient].name}</p>
+              <p><strong>Email:</strong> {recipientInfo[selectedRecipient].email}</p>
+              <p><strong>Department:</strong> {recipientInfo[selectedRecipient].department}</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
