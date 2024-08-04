@@ -18,11 +18,13 @@ const loadApiKey = () => {
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage, apiKey] = queryKey;
   const apiUrl = `https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`;
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(proxyUrl + apiUrl, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
       },
     });
     if (!response.ok) {
