@@ -18,7 +18,6 @@ const Index = () => {
       <header className="bg-card border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold">Documenso</h1>
             <nav>
               <ul className="flex space-x-4">
                 <li className="text-primary">Documents</li>
@@ -34,7 +33,6 @@ const Index = () => {
       </header>
 
       <main className="flex-grow container mx-auto p-4">
-        <h2 className="text-3xl font-bold mb-4">Documents</h2>
         <div className="flex space-x-2 mb-4">
           <Button variant="secondary" className="text-sm"><FileText className="w-4 h-4 mr-2" /> Inbox 1</Button>
           <Button variant="secondary" className="text-sm"><Clock className="w-4 h-4 mr-2" /> Pending 2</Button>
