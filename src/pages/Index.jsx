@@ -11,9 +11,12 @@ const API_KEY = 'api_4qwsyh7glv5mym3a';
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
-  const response = await fetch(`https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`, {
+  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+  const apiUrl = `https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`;
+  const response = await fetch(corsProxy + apiUrl, {
     headers: {
       'Authorization': API_KEY,
+      'X-Requested-With': 'XMLHttpRequest',
     },
   });
   if (!response.ok) {
