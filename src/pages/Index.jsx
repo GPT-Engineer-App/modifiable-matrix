@@ -83,8 +83,20 @@ const Index = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">Error loading documents: {error.message}</p>
+        <div className="text-center max-w-md">
+          <h2 className="text-2xl font-bold text-red-500 mb-4">Error Loading Documents</h2>
+          <p className="text-muted-foreground mb-4">{error.message}</p>
+          {error.response && (
+            <div className="bg-secondary p-4 rounded-md mb-4 text-left">
+              <p className="font-semibold">Status: {error.response.status}</p>
+              <p className="font-semibold">Status Text: {error.response.statusText}</p>
+              {error.response.data && (
+                <pre className="mt-2 text-sm overflow-auto">
+                  {JSON.stringify(error.response.data, null, 2)}
+                </pre>
+              )}
+            </div>
+          )}
           <Button onClick={() => window.location.reload()}>Retry</Button>
         </div>
       </div>
