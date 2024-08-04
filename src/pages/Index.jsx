@@ -11,8 +11,10 @@ import { useToast } from "@/components/ui/use-toast";
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
+  const apiUrl = `https://express-hello-world-6wub.onrender.com/documents?page=${page}&perPage=${perPage}`;
+  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
   try {
-    const response = await fetch(`https://express-hello-world-6wub.onrender.com/documents?page=${page}&perPage=${perPage}`);
+    const response = await fetch(proxyUrl);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
