@@ -39,6 +39,7 @@ const Index = () => {
   }, [documents, activeFilter]);
 
   const counts = useMemo(() => ({
+    All: documents.length,
     Inbox: documents.filter(doc => doc.status !== 'Draft').length,
     Pending: documents.filter(doc => doc.status === 'Pending').length,
     Completed: documents.filter(doc => doc.status === 'Completed').length,
@@ -71,35 +72,35 @@ const Index = () => {
             className="text-sm"
             onClick={() => setActiveFilter('Inbox')}
           >
-            <FileText className="w-4 h-4 mr-2" /> Inbox {counts.Inbox}
+            <FileText className="w-4 h-4 mr-2" /> Inbox ({counts.Inbox})
           </Button>
           <Button
             variant={activeFilter === 'Pending' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Pending')}
           >
-            <Clock className="w-4 h-4 mr-2" /> Pending {counts.Pending}
+            <Clock className="w-4 h-4 mr-2" /> Pending ({counts.Pending})
           </Button>
           <Button
             variant={activeFilter === 'Completed' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Completed')}
           >
-            <CheckCircle className="w-4 h-4 mr-2" /> Completed {counts.Completed}
+            <CheckCircle className="w-4 h-4 mr-2" /> Completed ({counts.Completed})
           </Button>
           <Button
             variant={activeFilter === 'Draft' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('Draft')}
           >
-            <FileText className="w-4 h-4 mr-2" /> Draft {counts.Draft}
+            <FileText className="w-4 h-4 mr-2" /> Draft ({counts.Draft})
           </Button>
           <Button
             variant={activeFilter === 'All' ? 'default' : 'secondary'}
             className="text-sm"
             onClick={() => setActiveFilter('All')}
           >
-            All
+            All ({counts.All})
           </Button>
         </div>
         <Table>
