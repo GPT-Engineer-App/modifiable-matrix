@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
+import { Eye, EyeOff } from 'lucide-react';
 
 const saveApiKey = (key) => {
   localStorage.setItem('documenso_api_key', key);
@@ -79,6 +80,8 @@ const Index = () => {
   const [downloadingId, setDownloadingId] = useState(null);
   const [selectedRecipient, setSelectedRecipient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
 
   const recipientInfo = {
     R1: { name: "Robert Smith", email: "robert.smith@example.com", department: "Sales" },
@@ -159,6 +162,7 @@ const Index = () => {
           <div className="flex items-center space-x-4">
             <Input type="text" placeholder="Search" className="w-64 bg-secondary" />
             <Button variant="outline" className="bg-secondary text-secondary-foreground">HR</Button>
+            <Button variant="outline" onClick={() => setIsApiKeyDialogOpen(true)}>View API Key</Button>
           </div>
         </div>
       </header>
@@ -328,10 +332,38 @@ const Index = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={isApiKeyDialogOpen} onOpenChange={setIsApiKeyDialogOpen}>
+        <DialogContent className="bg-background text-foreground">
+          <DialogHeader>
+            <DialogTitle>Your API Key</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center space-x-2">
+              <Input
+                type={showApiKey ? "text" : "password"}
+                value={apiKey}
+                readOnly
+                className="flex-grow"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowApiKey(!showApiKey)}
+              >
+                {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsApiKeyDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default Index;
-
-// API key storage removed
