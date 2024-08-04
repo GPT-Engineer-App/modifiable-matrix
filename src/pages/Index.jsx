@@ -80,30 +80,6 @@ const Index = () => {
   }), [documents]);
 
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
-        <Loader2 className="w-8 h-8 animate-spin" />
-        <span className="ml-2">Loading documents...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
-        <div className="text-center max-w-md">
-          <h2 className="text-2xl font-bold text-red-500 mb-4">Error Loading Documents</h2>
-          <p className="text-muted-foreground mb-4">{error.message}</p>
-          <p className="text-sm text-muted-foreground mb-4">
-            This could be due to an invalid API key or network issues. Please check your API key and try again.
-          </p>
-          <Button onClick={() => setShowApiKeyInput(true)}>Update API Key</Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground dark">
       <header className="bg-card border-b border-border p-4">
