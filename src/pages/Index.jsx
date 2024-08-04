@@ -170,8 +170,8 @@ const Index = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Button
-              variant={activeFilter === 'Inbox' ? 'default' : 'secondary'}
-              className="text-sm"
+              variant={activeFilter === 'Inbox' ? 'default' : 'outline'}
+              className={`text-sm ${activeFilter === 'Inbox' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
               onClick={() => setActiveFilter('Inbox')}
             >
               <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
@@ -182,30 +182,30 @@ const Index = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Button
-              variant={activeFilter === 'Pending' ? 'default' : 'secondary'}
-              className="text-sm"
+              variant={activeFilter === 'Pending' ? 'default' : 'outline'}
+              className={`text-sm ${activeFilter === 'Pending' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
               onClick={() => setActiveFilter('Pending')}
             >
               <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1">{counts.Pending}</span>
             </Button>
           </motion.div>
           <Button
-            variant={activeFilter === 'Completed' ? 'default' : 'secondary'}
-            className="text-sm"
+            variant={activeFilter === 'Completed' ? 'default' : 'outline'}
+            className={`text-sm ${activeFilter === 'Completed' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
             onClick={() => setActiveFilter('Completed')}
           >
             <CheckCircle className="w-4 h-4 mr-2" /> Completed <span className="ml-1">{counts.Completed}</span>
           </Button>
           <Button
-            variant={activeFilter === 'Draft' ? 'default' : 'secondary'}
-            className="text-sm"
+            variant={activeFilter === 'Draft' ? 'default' : 'outline'}
+            className={`text-sm ${activeFilter === 'Draft' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
             onClick={() => setActiveFilter('Draft')}
           >
             <FileText className="w-4 h-4 mr-2" /> Draft <span className="ml-1">{counts.Draft}</span>
           </Button>
           <Button
-            variant={activeFilter === 'All' ? 'default' : 'secondary'}
-            className="text-sm"
+            variant={activeFilter === 'All' ? 'default' : 'outline'}
+            className={`text-sm ${activeFilter === 'All' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
             onClick={() => setActiveFilter('All')}
           >
             All <span className="ml-1">{counts.All}</span>
