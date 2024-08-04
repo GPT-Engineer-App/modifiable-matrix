@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast";
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
@@ -25,10 +26,18 @@ const fetchDocuments = async ({ queryKey }) => {
 const Index = () => {
   const [page, setPage] = useState(1);
   const perPage = 20;
+  const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['documents', page, perPage],
     queryFn: fetchDocuments,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to load documents. Please try again later.",
+        variant: "destructive",
+      });
+    },
   });
 
   const documents = useMemo(() => {
