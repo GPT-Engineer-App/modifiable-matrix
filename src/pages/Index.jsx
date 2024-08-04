@@ -37,7 +37,7 @@ const Index = () => {
       id: doc.id,
       created: new Date(doc.createdAt).toLocaleString(),
       title: doc.title,
-      recipient: 'API', // We don't have recipient info from the API
+      recipient: doc.externalId || 'N/A',
       status: doc.status,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
     }));
@@ -66,17 +66,17 @@ const Index = () => {
   const filteredDocuments = useMemo(() => {
     if (activeFilter === 'All') return documents;
     return documents.filter(doc => {
-      if (activeFilter === 'Inbox') return doc.status !== 'Draft';
-      return doc.status === activeFilter;
+      if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
+      return doc.status.toUpperCase() === activeFilter.toUpperCase();
     });
   }, [documents, activeFilter]);
 
   const counts = useMemo(() => ({
     All: documents.length,
-    Inbox: documents.filter(doc => doc.status !== 'Draft').length,
-    Pending: documents.filter(doc => doc.status === 'Pending').length,
-    Completed: documents.filter(doc => doc.status === 'Completed').length,
-    Draft: documents.filter(doc => doc.status === 'Draft').length,
+    Inbox: documents.filter(doc => doc.status !== 'DRAFT').length,
+    Pending: documents.filter(doc => doc.status === 'PENDING').length,
+    Completed: documents.filter(doc => doc.status === 'COMPLETED').length,
+    Draft: documents.filter(doc => doc.status === 'DRAFT').length,
   }), [documents]);
 
 
@@ -214,11 +214,12 @@ const Index = () => {
                       </TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          doc.status === 'Completed' ? 'bg-green-500/20 text-green-500' :
-                          doc.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-500' :
-                          'bg-blue-500/20 text-blue-500'
+                          doc.status === 'COMPLETED' ? 'bg-green-500/20 text-green-500' :
+                          doc.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-500' :
+                          doc.status === 'DRAFT' ? 'bg-blue-500/20 text-blue-500' :
+                          'bg-gray-500/20 text-gray-500'
                         }`}>
-                          {doc.status}
+                          {doc.status.charAt(0) + doc.status.slice(1).toLowerCase()}
                         </span>
                       </TableCell>
                       <TableCell>
