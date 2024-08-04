@@ -1,44 +1,49 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 
-// Mock data to simulate API response
-const mockDocuments = [
-  { id: 1, title: 'Contract A', status: 'COMPLETED', createdAt: '2023-03-15T10:30:00Z' },
-  { id: 2, title: 'Agreement B', status: 'PENDING', createdAt: '2023-03-16T14:45:00Z' },
-  { id: 3, title: 'Proposal C', status: 'DRAFT', createdAt: '2023-03-17T09:15:00Z' },
-  { id: 4, title: 'NDA D', status: 'COMPLETED', createdAt: '2023-03-18T16:20:00Z' },
-  { id: 5, title: 'Invoice E', status: 'PENDING', createdAt: '2023-03-19T11:00:00Z' },
-];
+const API_KEY = 'api_xxxxxxxxxxxxxxxx'; // Replace with your actual API key
 
-const fetchDocuments = async () => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return { documents: mockDocuments };
+const fetchDocuments = async ({ queryKey }) => {
+  const [_, page, perPage] = queryKey;
+  const response = await fetch(`https://app.documenso.com/api/v1/documents?page=${page}&perPage=${perPage}`, {
+    headers: {
+      'Authorization': API_KEY,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
 };
 
 const Index = () => {
+  const [page, setPage] = useState(1);
+  const perPage = 20;
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['documents'],
+    queryKey: ['documents', page, perPage],
     queryFn: fetchDocuments,
   });
 
   const documents = useMemo(() => {
-    if (!data) return [];
+    if (!data || !data.documents) return [];
     return data.documents.map(doc => ({
       id: doc.id,
       created: new Date(doc.createdAt).toLocaleString(),
       title: doc.title,
-      recipient: ['R1', 'R2', 'HR', 'OM'][Math.floor(Math.random() * 4)], // Randomly assign recipients
+      recipient: 'API', // We don't have recipient info from the API
       status: doc.status,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
     }));
   }, [data]);
+
+  const totalPages = data?.totalPages || 1;
   const [activeFilter, setActiveFilter] = useState('All');
   const [downloadingId, setDownloadingId] = useState(null);
   const [selectedRecipient, setSelectedRecipient] = useState(null);
@@ -253,11 +258,23 @@ const Index = () => {
         <div className="flex justify-between items-center mt-4 text-muted-foreground">
           <p>Showing {filteredDocuments.length} results.</p>
           <div className="flex items-center space-x-2">
-            <span>Rows per page</span>
-            <select className="bg-secondary text-secondary-foreground rounded p-1">
-              <option>20</option>
-            </select>
-            <span>Page 1 of 1</span>
+            <span>Page {page} of {totalPages}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(prev => Math.max(1, prev - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </main>
