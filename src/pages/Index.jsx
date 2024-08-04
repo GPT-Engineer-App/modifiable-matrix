@@ -21,7 +21,7 @@ const fetchDocuments = async ({ queryKey }) => {
   try {
     const response = await fetch(apiUrl, {
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
     });
@@ -43,7 +43,7 @@ const Index = () => {
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['documents', page, perPage, apiKey],
-    queryFn: fetchDocuments,
+    queryFn: ({ queryKey }) => fetchDocuments({ queryKey }),
     enabled: !!apiKey,
   });
 
