@@ -20,46 +20,54 @@ const Index = () => {
           <div className="flex items-center space-x-4">
             <nav>
               <ul className="flex space-x-4">
-                <li className="text-primary">Documents</li>
-                <li>Templates</li>
+                <li className="text-primary font-semibold">Documents</li>
+                <li className="text-muted-foreground hover:text-foreground">Templates</li>
               </ul>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <Input type="text" placeholder="Search" className="w-64" />
-            <Button variant="outline">HR</Button>
+            <Input type="text" placeholder="Search" className="w-64 bg-secondary" />
+            <Button variant="outline" className="bg-secondary text-secondary-foreground">HR</Button>
           </div>
         </div>
       </header>
 
       <main className="flex-grow container mx-auto p-4">
         <div className="flex space-x-2 mb-4">
-          <Button variant="secondary" className="text-sm"><FileText className="w-4 h-4 mr-2" /> Inbox 1</Button>
-          <Button variant="secondary" className="text-sm"><Clock className="w-4 h-4 mr-2" /> Pending 2</Button>
-          <Button variant="secondary" className="text-sm"><CheckCircle className="w-4 h-4 mr-2" /> Completed 2</Button>
-          <Button variant="secondary" className="text-sm"><FileText className="w-4 h-4 mr-2" /> Draft 1</Button>
-          <Button variant="secondary" className="text-sm">All</Button>
+          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><FileText className="w-4 h-4 mr-2" /> Inbox 1</Button>
+          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><Clock className="w-4 h-4 mr-2" /> Pending 2</Button>
+          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><CheckCircle className="w-4 h-4 mr-2" /> Completed 2</Button>
+          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><FileText className="w-4 h-4 mr-2" /> Draft 1</Button>
+          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground">All</Button>
         </div>
-        <Table>
+        <Table className="bg-card">
           <TableHeader>
-            <TableRow>
-              <TableHead>Created</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Recipient</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+            <TableRow className="bg-muted hover:bg-muted/80">
+              <TableHead className="text-muted-foreground">Created</TableHead>
+              <TableHead className="text-muted-foreground">Title</TableHead>
+              <TableHead className="text-muted-foreground">Recipient</TableHead>
+              <TableHead className="text-muted-foreground">Status</TableHead>
+              <TableHead className="text-muted-foreground">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {documents.map((doc) => (
-              <TableRow key={doc.id}>
-                <TableCell>{doc.created}</TableCell>
+              <TableRow key={doc.id} className="hover:bg-muted/50">
+                <TableCell className="text-muted-foreground">{doc.created}</TableCell>
                 <TableCell>{doc.title}</TableCell>
-                <TableCell>{doc.recipient}</TableCell>
-                <TableCell>{doc.status}</TableCell>
+                <TableCell className="text-muted-foreground">{doc.recipient}</TableCell>
+                <TableCell>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    doc.status === 'Completed' ? 'bg-green-500/20 text-green-500' :
+                    doc.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-500' :
+                    'bg-blue-500/20 text-blue-500'
+                  }`}>
+                    {doc.status}
+                  </span>
+                </TableCell>
                 <TableCell>
                   {doc.action && (
-                    <Button variant="secondary" size="sm">
+                    <Button variant="secondary" size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
                       {doc.action}
                     </Button>
                   )}
@@ -68,7 +76,7 @@ const Index = () => {
             ))}
           </TableBody>
         </Table>
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center mt-4 text-muted-foreground">
           <p>Showing 5 results.</p>
           <div className="flex items-center space-x-2">
             <span>Rows per page</span>
