@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
@@ -25,10 +26,26 @@ const fetchDocuments = async ({ queryKey }) => {
   }
 };
 
+const fetchDocumentDetails = async (id) => {
+  const apiUrl = `https://express-hello-world-6wub.onrender.com/documents/${id}`;
+  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
+  try {
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching document details:', error);
+    throw error;
+  }
+};
+
 const Index = () => {
   const [page, setPage] = useState(1);
   const perPage = 20;
   const { toast } = useToast();
+  const [selectedDocumentId, setSelectedDocumentId] = useState(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['documents', page, perPage],
@@ -37,6 +54,19 @@ const Index = () => {
       toast({
         title: "Error",
         description: "Failed to load documents. Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const { data: documentDetails, isLoading: isLoadingDetails } = useQuery({
+    queryKey: ['documentDetails', selectedDocumentId],
+    queryFn: () => fetchDocumentDetails(selectedDocumentId),
+    enabled: !!selectedDocumentId,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to load document details. Please try again later.",
         variant: "destructive",
       });
     },
@@ -187,7 +217,14 @@ const Index = () => {
                       transition={{ duration: 0.2, delay: index * 0.05 }}
                     >
                       <TableCell className="text-muted-foreground">{doc.created}</TableCell>
-                      <TableCell>{doc.title}</TableCell>
+                      <TableCell>
+                        <span
+                          className="cursor-pointer hover:text-primary transition-colors duration-200"
+                          onClick={() => setSelectedDocumentId(doc.id)}
+                        >
+                          {doc.title}
+                        </span>
+                      </TableCell>
                       <TableCell>
                         {doc.recipient.split(', ').map((recipient, index) => (
                           <span
@@ -273,6 +310,30 @@ const Index = () => {
               <p><strong className="text-muted-foreground">Email:</strong> <span>{recipientInfo[selectedRecipient].email}</span></p>
               <p><strong className="text-muted-foreground">Department:</strong> <span>{recipientInfo[selectedRecipient].department}</span></p>
             </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedDocumentId} onOpenChange={() => setSelectedDocumentId(null)}>
+        <DialogContent className="bg-background text-foreground">
+          <DialogHeader>
+            <DialogTitle>Document Details</DialogTitle>
+          </DialogHeader>
+          {isLoadingDetails ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+              <Skeleton className="h-4 w-[150px]" />
+            </div>
+          ) : documentDetails ? (
+            <div className="mt-4 space-y-2">
+              <p><strong className="text-muted-foreground">Title:</strong> <span>{documentDetails.title}</span></p>
+              <p><strong className="text-muted-foreground">Created At:</strong> <span>{new Date(documentDetails.createdAt).toLocaleString()}</span></p>
+              <p><strong className="text-muted-foreground">Status:</strong> <span>{documentDetails.status}</span></p>
+              <p><strong className="text-muted-foreground">External ID:</strong> <span>{documentDetails.externalId || 'N/A'}</span></p>
+            </div>
+          ) : (
+            <p>No details available</p>
           )}
         </DialogContent>
       </Dialog>
