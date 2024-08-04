@@ -14,7 +14,7 @@ const Index = () => {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground dark">
       <header className="bg-card border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -34,15 +34,15 @@ const Index = () => {
 
       <main className="flex-grow container mx-auto p-4">
         <div className="flex space-x-2 mb-4">
-          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><FileText className="w-4 h-4 mr-2" /> Inbox 1</Button>
-          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><Clock className="w-4 h-4 mr-2" /> Pending 2</Button>
-          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><CheckCircle className="w-4 h-4 mr-2" /> Completed 2</Button>
-          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground"><FileText className="w-4 h-4 mr-2" /> Draft 1</Button>
-          <Button variant="secondary" className="text-sm bg-secondary text-secondary-foreground">All</Button>
+          <Button variant="secondary" className="text-sm"><FileText className="w-4 h-4 mr-2" /> Inbox 1</Button>
+          <Button variant="secondary" className="text-sm"><Clock className="w-4 h-4 mr-2" /> Pending 2</Button>
+          <Button variant="secondary" className="text-sm"><CheckCircle className="w-4 h-4 mr-2" /> Completed 2</Button>
+          <Button variant="secondary" className="text-sm"><FileText className="w-4 h-4 mr-2" /> Draft 1</Button>
+          <Button variant="secondary" className="text-sm">All</Button>
         </div>
-        <Table className="bg-card">
+        <Table>
           <TableHeader>
-            <TableRow className="bg-muted hover:bg-muted/80">
+            <TableRow>
               <TableHead className="text-muted-foreground">Created</TableHead>
               <TableHead className="text-muted-foreground">Title</TableHead>
               <TableHead className="text-muted-foreground">Recipient</TableHead>
@@ -52,7 +52,7 @@ const Index = () => {
           </TableHeader>
           <TableBody>
             {documents.map((doc) => (
-              <TableRow key={doc.id} className="hover:bg-muted/50">
+              <TableRow key={doc.id}>
                 <TableCell className="text-muted-foreground">{doc.created}</TableCell>
                 <TableCell>{doc.title}</TableCell>
                 <TableCell className="text-muted-foreground">{doc.recipient}</TableCell>
@@ -67,7 +67,7 @@ const Index = () => {
                 </TableCell>
                 <TableCell>
                   {doc.action && (
-                    <Button variant="secondary" size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                    <Button variant="secondary" size="sm">
                       {doc.action}
                     </Button>
                   )}
