@@ -1,19 +1,43 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+
+const API_KEY = 'api_4qwsyh7glv5mym3a';
+
+const fetchDocuments = async () => {
+  const response = await fetch('https://api.documenso.com/api/v1/documents', {
+    headers: {
+      'Authorization': `Bearer ${API_KEY}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch documents');
+  }
+  return response.json();
+};
 
 const Index = () => {
-  const [documents] = useState([
-    { id: 1, created: '02/08/2024, 4:45 pm', title: 'VanRein.pdf', recipient: 'R1', status: 'Completed', action: 'Download' },
-    { id: 2, created: '02/08/2024, 1:48 pm', title: 'Document Title', recipient: 'R1, R2', status: 'Pending', action: 'Sign' },
-    { id: 3, created: '02/08/2024, 1:29 pm', title: 'Document Title', recipient: 'R1, R2', status: 'Pending', action: '' },
-    { id: 4, created: '02/08/2024, 1:22 pm', title: 'Document Title', recipient: 'HR, R1', status: 'Draft', action: 'Edit' },
-    { id: 5, created: '20/02/2024, 2:19 pm', title: 'Retainer Agreement IMS', recipient: 'OM, HR', status: 'Completed', action: 'Download' },
-  ]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['documents'],
+    queryFn: fetchDocuments,
+  });
+
+  const documents = useMemo(() => {
+    if (!data) return [];
+    return data.documents.map(doc => ({
+      id: doc.id,
+      created: new Date(doc.createdAt).toLocaleString(),
+      title: doc.title,
+      recipient: 'API', // We don't have recipient information in the API response
+      status: doc.status,
+      action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
+    }));
+  }, [data]);
   const [activeFilter, setActiveFilter] = useState('All');
   const [downloadingId, setDownloadingId] = useState(null);
   const [selectedRecipient, setSelectedRecipient] = useState(null);
@@ -46,6 +70,26 @@ const Index = () => {
     Completed: documents.filter(doc => doc.status === 'Completed').length,
     Draft: documents.filter(doc => doc.status === 'Draft').length,
   }), [documents]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <span className="ml-2">Loading documents...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground dark">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error loading documents: {error.message}</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground dark">
@@ -224,3 +268,6 @@ const Index = () => {
 };
 
 export default Index;
+
+// Store API key in local storage (for testing purposes only)
+localStorage.setItem('documenso_api_key', API_KEY);
