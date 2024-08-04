@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 
-const API_KEY = 'api_xxxxxxxxxxxxxxxx'; // Replace with your actual API key
+const API_KEY = 'api_4qwsyh7glv5mym3a';
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
