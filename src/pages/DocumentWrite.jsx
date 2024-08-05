@@ -299,6 +299,12 @@ const DocumentWrite = () => {
                       inline 
                         ? <code className="bg-secondary rounded px-1 py-0.5" {...props} />
                         : <pre className="bg-secondary rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
+                    table: ({ node, ...props }) => <table className="table-auto border-collapse mb-4 w-full" {...props} />,
+                    thead: ({ node, ...props }) => <thead className="bg-secondary" {...props} />,
+                    tbody: ({ node, ...props }) => <tbody {...props} />,
+                    tr: ({ node, ...props }) => <tr className="border-b border-border" {...props} />,
+                    th: ({ node, ...props }) => <th className="p-2 text-left font-semibold" {...props} />,
+                    td: ({ node, ...props }) => <td className="p-2" {...props} />,
                   }}
                 >
                   {content}
