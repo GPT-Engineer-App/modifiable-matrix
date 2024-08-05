@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText, Loader2, PenTool } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -119,11 +119,22 @@ const Index = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
   const recipientInfo = {
     R1: { name: "Robert Smith", email: "robert.smith@example.com", department: "Sales" },
     R2: { name: "Emma Johnson", email: "emma.johnson@example.com", department: "Marketing" },
     HR: { name: "Human Resources", email: "hr@example.com", department: "Human Resources" },
     OM: { name: "Operations Manager", email: "operations@example.com", department: "Operations" },
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
   };
 
   const handleRecipientClick = (recipient) => {
@@ -132,13 +143,23 @@ const Index = () => {
   };
 
   const filteredDocuments = useMemo(() => {
-    return activeFilter === 'All' 
+    let filtered = activeFilter === 'All' 
       ? documents 
       : documents.filter(doc => {
           if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
           return doc.status.toUpperCase() === activeFilter.toUpperCase();
         });
-  }, [documents, activeFilter]);
+
+    if (sortColumn) {
+      filtered.sort((a, b) => {
+        if (a[sortColumn] < b[sortColumn]) return sortDirection === 'asc' ? -1 : 1;
+        if (a[sortColumn] > b[sortColumn]) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [documents, activeFilter, sortColumn, sortDirection]);
 
   const counts = useMemo(() => ({
     All: documents.length,
@@ -246,10 +267,21 @@ const Index = () => {
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Created</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Title</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Recipient</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Status</TableHead>
+                    {['created', 'title', 'recipient', 'status'].map((column) => (
+                      <TableHead 
+                        key={column}
+                        className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                        onClick={() => handleSort(column)}
+                      >
+                        <div className="flex items-center">
+                          {column.charAt(0).toUpperCase() + column.slice(1)}
+                          {sortColumn === column && (
+                            sortDirection === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />
+                          )}
+                          {sortColumn !== column && <ArrowUpDown className="ml-2 h-4 w-4 opacity-0 group-hover:opacity-100" />}
+                        </div>
+                      </TableHead>
+                    ))}
                     <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
