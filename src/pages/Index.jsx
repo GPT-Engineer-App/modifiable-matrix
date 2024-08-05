@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText, Loader2 } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2, PenTool } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -42,6 +43,7 @@ const fetchDocumentDetails = async (id) => {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const perPage = 20;
   const { toast } = useToast();
@@ -141,19 +143,28 @@ const Index = () => {
       </header>
 
       <main className="flex-grow container mx-auto p-4">
-        <div className="flex space-x-2 mb-4">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              variant={activeFilter === 'Inbox' ? 'default' : 'outline'}
-              className={`text-sm ${activeFilter === 'Inbox' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
-              onClick={() => setActiveFilter('Inbox')}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex space-x-2">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
-            </Button>
-          </motion.div>
+              <Button
+                variant={activeFilter === 'Inbox' ? 'default' : 'outline'}
+                className={`text-sm ${activeFilter === 'Inbox' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
+                onClick={() => setActiveFilter('Inbox')}
+              >
+                <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
+              </Button>
+            </motion.div>
+          </div>
+          <Button
+            onClick={() => navigate('/write')}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <PenTool className="w-4 h-4 mr-2" /> New Document
+          </Button>
+        </div>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
