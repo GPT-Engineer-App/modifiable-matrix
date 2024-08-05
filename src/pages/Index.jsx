@@ -75,6 +75,12 @@ const Index = () => {
     },
   });
 
+  const { data: documentDetails, isLoading: isLoadingDetails } = useQuery({
+    queryKey: ['documentDetails', selectedDocumentId],
+    queryFn: () => fetchDocumentDetails(selectedDocumentId),
+    enabled: !!selectedDocumentId,
+  });
+
   const documents = useMemo(() => {
     if (!data || !data.documents) return [];
     return data.documents.map(doc => ({
