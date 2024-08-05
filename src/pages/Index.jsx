@@ -310,8 +310,7 @@ const Index = () => {
       </main>
 
       <>
-        {isModalOpen && (
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="bg-background text-foreground">
             <DialogHeader>
               <DialogTitle>Recipient Information</DialogTitle>
@@ -325,7 +324,6 @@ const Index = () => {
             )}
           </DialogContent>
         </Dialog>
-        )}
 
         <Dialog open={!!selectedDocumentId} onOpenChange={() => setSelectedDocumentId(null)}>
           <DialogContent 
