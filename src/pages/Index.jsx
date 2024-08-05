@@ -85,11 +85,11 @@ const Index = () => {
     if (!data || !data.documents) return [];
     return data.documents.map(doc => ({
       id: doc.id,
-      created: new Date(doc.createdAt).toLocaleString(),
-      updated: new Date(doc.updatedAt).toLocaleString(),
-      title: doc.title,
-      recipients: Array.isArray(doc.recipients) ? doc.recipients.map(r => r.name).join(', ') : '',
-      status: doc.status,
+      created: doc.createdAt ? new Date(doc.createdAt).toLocaleString() : 'N/A',
+      updated: doc.updatedAt ? new Date(doc.updatedAt).toLocaleString() : 'N/A',
+      title: doc.title || 'Untitled',
+      recipients: Array.isArray(doc.recipients) ? doc.recipients.map(r => r.name || 'Unknown').join(', ') : '',
+      status: doc.status || 'Unknown',
       fields: Array.isArray(doc.fields) ? doc.fields.length : 0,
       files: Array.isArray(doc.files) ? doc.files.length : 0,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
@@ -151,11 +151,11 @@ const Index = () => {
   }, [documents, activeFilter, sortColumn, sortDirection]);
 
   const counts = useMemo(() => ({
-    All: documents.length,
-    Inbox: documents.filter(doc => doc.status !== 'DRAFT').length,
-    Pending: documents.filter(doc => doc.status === 'PENDING').length,
-    Completed: documents.filter(doc => doc.status === 'COMPLETED').length,
-    Draft: documents.filter(doc => doc.status === 'DRAFT').length,
+    All: documents?.length || 0,
+    Inbox: documents?.filter(doc => doc.status !== 'DRAFT')?.length || 0,
+    Pending: documents?.filter(doc => doc.status === 'PENDING')?.length || 0,
+    Completed: documents?.filter(doc => doc.status === 'COMPLETED')?.length || 0,
+    Draft: documents?.filter(doc => doc.status === 'DRAFT')?.length || 0,
   }), [documents]);
 
   const handleDocumentComplete = useCallback(() => {
