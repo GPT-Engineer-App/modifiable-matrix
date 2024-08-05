@@ -168,10 +168,10 @@ const Index = () => {
 
   const getSortIcon = (columnName) => {
     if (sortConfig.key === columnName) {
-      if (sortConfig.direction === 'ascending') return <ArrowUp className="w-4 h-4 ml-1" />;
-      if (sortConfig.direction === 'descending') return <ArrowDown className="w-4 h-4 ml-1" />;
+      if (sortConfig.direction === 'ascending') return <ArrowUp className="w-3 h-3" />;
+      if (sortConfig.direction === 'descending') return <ArrowDown className="w-3 h-3" />;
     }
-    return <ArrowUpDown className="w-4 h-4 ml-1" />;
+    return <ArrowUpDown className="w-3 h-3" />;
   };
 
   const counts = useMemo(() => ({
@@ -284,25 +284,33 @@ const Index = () => {
                       className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
                       onClick={() => requestSort('created')}
                     >
-                      Created {getSortIcon('created')}
+                      <div className="flex items-center">
+                        Created <span className="ml-1">{getSortIcon('created')}</span>
+                      </div>
                     </TableHead>
                     <TableHead 
                       className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
                       onClick={() => requestSort('title')}
                     >
-                      Title {getSortIcon('title')}
+                      <div className="flex items-center">
+                        Title <span className="ml-1">{getSortIcon('title')}</span>
+                      </div>
                     </TableHead>
                     <TableHead 
                       className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
                       onClick={() => requestSort('recipient')}
                     >
-                      Recipient {getSortIcon('recipient')}
+                      <div className="flex items-center">
+                        Recipient <span className="ml-1">{getSortIcon('recipient')}</span>
+                      </div>
                     </TableHead>
                     <TableHead 
                       className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
                       onClick={() => requestSort('status')}
                     >
-                      Status {getSortIcon('status')}
+                      <div className="flex items-center">
+                        Status <span className="ml-1">{getSortIcon('status')}</span>
+                      </div>
                     </TableHead>
                     <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
                   </TableRow>
