@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2, PenTool } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -44,6 +44,7 @@ const fetchDocumentDetails = async (id) => {
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const perPage = 20;
   const { toast } = useToast();
@@ -60,6 +61,17 @@ const Index = () => {
       });
     },
   });
+
+  useEffect(() => {
+    if (location.state?.documentAdded) {
+      toast({
+        title: "Success",
+        description: "Document added successfully",
+        variant: "default",
+      });
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, toast, navigate]);
 
   const { data: documentDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ['documentDetails', selectedDocumentId],

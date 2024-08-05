@@ -201,7 +201,7 @@ const DocumentWrite = () => {
     
     // Navigate back to home page after a short delay
     setTimeout(() => {
-      navigate('/');
+      navigate('/', { state: { documentAdded: true } });
     }, 500);
   };
 
