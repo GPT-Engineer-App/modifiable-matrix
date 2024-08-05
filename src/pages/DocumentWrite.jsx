@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
@@ -158,6 +158,7 @@ const DocumentWrite = () => {
   const [recipient, setRecipient] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
   const { theme } = useTheme();
+  const { toast } = useToast();
 
   useEffect(() => {
     const template = templates.find(t => t.id === selectedTemplate);
@@ -188,7 +189,7 @@ const DocumentWrite = () => {
           <div>
             <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
             <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-              <SelectTrigger className="bg-secondary">
+              <SelectTrigger className="bg-secondary text-secondary-foreground">
                 <SelectValue placeholder="Select a template" />
               </SelectTrigger>
               <SelectContent>
@@ -206,7 +207,7 @@ const DocumentWrite = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter document title"
               required
-              className="bg-secondary"
+              className="bg-secondary text-secondary-foreground"
             />
           </div>
         </div>
@@ -284,7 +285,7 @@ const DocumentWrite = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Create Document</Button>
+        <Button type="submit" className="w-full bg-yellow-400 text-black hover:bg-yellow-500">Create Document</Button>
       </form>
     </div>
   );
