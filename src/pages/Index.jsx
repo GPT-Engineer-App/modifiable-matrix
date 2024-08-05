@@ -106,10 +106,10 @@ const Index = () => {
       created: new Date(doc.createdAt).toLocaleString(),
       updated: new Date(doc.updatedAt).toLocaleString(),
       title: doc.title,
-      recipients: doc.recipients.map(r => r.name).join(', '),
+      recipients: Array.isArray(doc.recipients) ? doc.recipients.map(r => r.name).join(', ') : '',
       status: doc.status,
-      fields: doc.fields.length,
-      files: doc.files.length,
+      fields: Array.isArray(doc.fields) ? doc.fields.length : 0,
+      files: Array.isArray(doc.files) ? doc.files.length : 0,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
     }));
   }, [data]);
@@ -146,17 +146,21 @@ const Index = () => {
   };
 
   const filteredDocuments = useMemo(() => {
+    if (!Array.isArray(documents)) return [];
+  
     let filtered = activeFilter === 'All' 
       ? documents 
       : documents.filter(doc => {
           if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
-          return doc.status.toUpperCase() === activeFilter.toUpperCase();
+          return doc.status && doc.status.toUpperCase() === activeFilter.toUpperCase();
         });
 
     if (sortColumn) {
       filtered.sort((a, b) => {
-        if (a[sortColumn] < b[sortColumn]) return sortDirection === 'asc' ? -1 : 1;
-        if (a[sortColumn] > b[sortColumn]) return sortDirection === 'asc' ? 1 : -1;
+        const aValue = a[sortColumn] ?? '';
+        const bValue = b[sortColumn] ?? '';
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
         return 0;
       });
     }
