@@ -223,7 +223,7 @@ const Index = () => {
                 className={`text-sm ${activeFilter === 'Inbox' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
                 onClick={() => setActiveFilter('Inbox')}
               >
-                <FileText className="w-3 h-3 inline-block mr-1" /> Inbox <span className="ml-1">{counts.Inbox}</span>
+                <FileText className="w-4 h-4 mr-2" /> Inbox <span className="ml-1">{counts.Inbox}</span>
               </Button>
             </motion.div>
             <motion.div
@@ -235,7 +235,7 @@ const Index = () => {
                 className={`text-sm ${activeFilter === 'Pending' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
                 onClick={() => setActiveFilter('Pending')}
               >
-                <Clock className="w-3 h-3 inline-block mr-1" /> Pending <span className="ml-1">{counts.Pending}</span>
+                <Clock className="w-4 h-4 mr-2" /> Pending <span className="ml-1">{counts.Pending}</span>
               </Button>
             </motion.div>
             <Button
@@ -243,14 +243,14 @@ const Index = () => {
               className={`text-sm ${activeFilter === 'Completed' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
               onClick={() => setActiveFilter('Completed')}
             >
-              <CheckCircle className="w-3 h-3 inline-block mr-1" /> Completed <span className="ml-1">{counts.Completed}</span>
+              <CheckCircle className="w-4 h-4 mr-2" /> Completed <span className="ml-1">{counts.Completed}</span>
             </Button>
             <Button
               variant={activeFilter === 'Draft' ? 'default' : 'outline'}
               className={`text-sm ${activeFilter === 'Draft' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-secondary hover:bg-secondary/80'}`}
               onClick={() => setActiveFilter('Draft')}
             >
-              <FileText className="w-3 h-3 inline-block mr-1" /> Draft <span className="ml-1">{counts.Draft}</span>
+              <FileText className="w-4 h-4 mr-2" /> Draft <span className="ml-1">{counts.Draft}</span>
             </Button>
             <Button
               variant={activeFilter === 'All' ? 'default' : 'outline'}
@@ -264,7 +264,7 @@ const Index = () => {
             onClick={() => navigate('/write')}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            <PenTool className="w-3 h-3 inline-block mr-1" /> New Document
+            <PenTool className="w-4 h-4 mr-2" /> New Document
           </Button>
         </div>
         <AnimatePresence mode="wait">
