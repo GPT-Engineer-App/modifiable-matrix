@@ -5,9 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
-import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const templates = [
   { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
@@ -188,19 +189,25 @@ const DocumentWrite = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSending(true);
     console.log({ title, content, recipients });
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsSending(false);
     toast({
-      title: "Document Sent",
-      description: "Your document has been successfully sent to the recipients.",
+      title: "Document Created and Sent",
+      description: "Your document has been successfully created and sent to the recipients.",
     });
-    // Reset form and go back to step 1
-    setTitle('');
-    setContent(templates[0].content);
-    setRecipients([]);
-    setSelectedTemplate(templates[0].id);
-    setStep(1);
+    
+    // Navigate back to home page
+    navigate('/');
   };
 
   const renderStep = () => {
@@ -389,8 +396,19 @@ const DocumentWrite = () => {
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">
-              Send Document
+            <Button 
+              onClick={handleSubmit} 
+              className="bg-primary text-primary-foreground"
+              disabled={isSending}
+            >
+              {isSending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                'Send Document'
+              )}
             </Button>
           )}
         </div>
