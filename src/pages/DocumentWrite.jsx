@@ -216,27 +216,29 @@ const DocumentWrite = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="mt-4 border border-border rounded-md p-4 bg-card overflow-auto max-h-[300px]">
-                <ReactMarkdown
-                  components={{
-                    h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mb-2" {...props} />,
-                    h2: ({ node, ...props }) => <h2 className="text-xl font-bold mb-2" {...props} />,
-                    h3: ({ node, ...props }) => <h3 className="text-lg font-bold mb-2" {...props} />,
-                    p: ({ node, ...props }) => <p className="mb-4" {...props} />,
-                    ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4" {...props} />,
-                    ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4" {...props} />,
-                    li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-                    a: ({ node, ...props }) => <a className="text-primary hover:underline" {...props} />,
-                    blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-border pl-4 italic mb-4" {...props} />,
-                    code: ({ node, inline, ...props }) => 
-                      inline 
-                        ? <code className="bg-secondary rounded px-1 py-0.5" {...props} />
-                        : <pre className="bg-secondary rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
-                  }}
-                >
-                  {templates.find(t => t.id === selectedTemplate).content}
-                </ReactMarkdown>
-              </div>
+              {selectedTemplate !== 'blank' && (
+                <div className="mt-4 border border-border rounded-md p-4 bg-card overflow-auto max-h-[300px]">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mb-2" {...props} />,
+                      h2: ({ node, ...props }) => <h2 className="text-xl font-bold mb-2" {...props} />,
+                      h3: ({ node, ...props }) => <h3 className="text-lg font-bold mb-2" {...props} />,
+                      p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4" {...props} />,
+                      ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4" {...props} />,
+                      li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                      a: ({ node, ...props }) => <a className="text-primary hover:underline" {...props} />,
+                      blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-border pl-4 italic mb-4" {...props} />,
+                      code: ({ node, inline, ...props }) => 
+                        inline 
+                          ? <code className="bg-secondary rounded px-1 py-0.5" {...props} />
+                          : <pre className="bg-secondary rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
+                    }}
+                  >
+                    {templates.find(t => t.id === selectedTemplate).content}
+                  </ReactMarkdown>
+                </div>
+              )}
             </div>
           </div>
         );
