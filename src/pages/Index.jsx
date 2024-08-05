@@ -325,8 +325,8 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog>
-        <DialogContent className="bg-background text-foreground" open={!!selectedDocumentId} onOpenChange={() => setSelectedDocumentId(null)}>
+      <Dialog open={!!selectedDocumentId} onOpenChange={() => setSelectedDocumentId(null)}>
+        <DialogContent className="bg-background text-foreground">
           <DialogHeader>
             <DialogTitle>Document Details</DialogTitle>
           </DialogHeader>
