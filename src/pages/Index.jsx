@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText, Loader2, PenTool } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -119,6 +119,7 @@ const Index = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'off' });
 
   const recipientInfo = {
     R1: { name: "Robert Smith", email: "robert.smith@example.com", department: "Sales" },
@@ -133,12 +134,45 @@ const Index = () => {
   };
 
   const filteredDocuments = useMemo(() => {
-    if (activeFilter === 'All') return documents;
-    return documents.filter(doc => {
-      if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
-      return doc.status.toUpperCase() === activeFilter.toUpperCase();
-    });
-  }, [documents, activeFilter]);
+    let filtered = activeFilter === 'All' 
+      ? documents 
+      : documents.filter(doc => {
+          if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
+          return doc.status.toUpperCase() === activeFilter.toUpperCase();
+        });
+
+    if (sortConfig.key !== null) {
+      filtered.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [documents, activeFilter, sortConfig]);
+
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    } else if (sortConfig.key === key && sortConfig.direction === 'descending') {
+      direction = 'off';
+    }
+    setSortConfig({ key: direction === 'off' ? null : key, direction });
+  };
+
+  const getSortIcon = (columnName) => {
+    if (sortConfig.key === columnName) {
+      if (sortConfig.direction === 'ascending') return <ArrowUp className="w-4 h-4 ml-1" />;
+      if (sortConfig.direction === 'descending') return <ArrowDown className="w-4 h-4 ml-1" />;
+    }
+    return <ArrowUpDown className="w-4 h-4 ml-1" />;
+  };
 
   const counts = useMemo(() => ({
     All: documents.length,
@@ -246,10 +280,30 @@ const Index = () => {
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Created</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Title</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Recipient</TableHead>
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Status</TableHead>
+                    <TableHead 
+                      className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                      onClick={() => requestSort('created')}
+                    >
+                      Created {getSortIcon('created')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                      onClick={() => requestSort('title')}
+                    >
+                      Title {getSortIcon('title')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                      onClick={() => requestSort('recipient')}
+                    >
+                      Recipient {getSortIcon('recipient')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                      onClick={() => requestSort('status')}
+                    >
+                      Status {getSortIcon('status')}
+                    </TableHead>
                     <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
