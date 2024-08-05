@@ -9,7 +9,6 @@ import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const templates = [
   { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
