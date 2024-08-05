@@ -327,10 +327,11 @@ const DocumentWrite = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
-      <div className="mb-4 flex justify-between items-center">
-        <div className="space-x-2">
+    <>
+      <div className="container mx-auto p-4 bg-background text-foreground">
+        <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
+        <div className="mb-4 flex justify-between items-center">
+          <div className="space-x-2">
           {[1, 2, 3].map((s) => (
             <Button
               key={s}
@@ -399,6 +400,7 @@ const DocumentWrite = () => {
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 };
 
