@@ -309,48 +309,50 @@ const Index = () => {
         </div>
       </main>
 
-      {isModalOpen && (
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-background text-foreground">
-          <DialogHeader>
-            <DialogTitle>Recipient Information</DialogTitle>
-          </DialogHeader>
-          {selectedRecipient && recipientInfo[selectedRecipient] && (
-            <div className="mt-4 space-y-2">
-              <p><strong className="text-muted-foreground">Name:</strong> <span>{recipientInfo[selectedRecipient].name}</span></p>
-              <p><strong className="text-muted-foreground">Email:</strong> <span>{recipientInfo[selectedRecipient].email}</span></p>
-              <p><strong className="text-muted-foreground">Department:</strong> <span>{recipientInfo[selectedRecipient].department}</span></p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <>
+        {isModalOpen && (
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="bg-background text-foreground">
+            <DialogHeader>
+              <DialogTitle>Recipient Information</DialogTitle>
+            </DialogHeader>
+            {selectedRecipient && recipientInfo[selectedRecipient] && (
+              <div className="mt-4 space-y-2">
+                <p><strong className="text-muted-foreground">Name:</strong> <span>{recipientInfo[selectedRecipient].name}</span></p>
+                <p><strong className="text-muted-foreground">Email:</strong> <span>{recipientInfo[selectedRecipient].email}</span></p>
+                <p><strong className="text-muted-foreground">Department:</strong> <span>{recipientInfo[selectedRecipient].department}</span></p>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+        )}
 
-      <Dialog onOpenChange={() => setSelectedDocumentId(null)}>
-        <DialogContent 
-          className="bg-background text-foreground"
-          open={!!selectedDocumentId}
-        >
-          <DialogHeader>
-            <DialogTitle>Document Details</DialogTitle>
-          </DialogHeader>
-          {isLoadingDetails ? (
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
-              <Skeleton className="h-4 w-[150px]" />
-            </div>
-          ) : documentDetails ? (
-            <div className="mt-4 space-y-2">
-              <p><strong className="text-muted-foreground">Title:</strong> <span>{documentDetails.title}</span></p>
-              <p><strong className="text-muted-foreground">Created At:</strong> <span>{new Date(documentDetails.createdAt).toLocaleString()}</span></p>
-              <p><strong className="text-muted-foreground">Status:</strong> <span>{documentDetails.status}</span></p>
-              <p><strong className="text-muted-foreground">External ID:</strong> <span>{documentDetails.externalId || 'N/A'}</span></p>
-            </div>
-          ) : (
-            <p>No details available</p>
-          )}
-        </DialogContent>
-      </Dialog>
+        <Dialog open={!!selectedDocumentId} onOpenChange={() => setSelectedDocumentId(null)}>
+          <DialogContent 
+            className="bg-background text-foreground"
+          >
+            <DialogHeader>
+              <DialogTitle>Document Details</DialogTitle>
+            </DialogHeader>
+            {isLoadingDetails ? (
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+                <Skeleton className="h-4 w-[150px]" />
+              </div>
+            ) : documentDetails ? (
+              <div className="mt-4 space-y-2">
+                <p><strong className="text-muted-foreground">Title:</strong> <span>{documentDetails.title}</span></p>
+                <p><strong className="text-muted-foreground">Created At:</strong> <span>{new Date(documentDetails.createdAt).toLocaleString()}</span></p>
+                <p><strong className="text-muted-foreground">Status:</strong> <span>{documentDetails.status}</span></p>
+                <p><strong className="text-muted-foreground">External ID:</strong> <span>{documentDetails.externalId || 'N/A'}</span></p>
+              </div>
+            ) : (
+              <p>No details available</p>
+            )}
+          </DialogContent>
+        </Dialog>
+      </>
 
     </div>
   );
