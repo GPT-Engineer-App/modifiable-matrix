@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
+import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
 
 const DocumentWrite = () => {
   const [title, setTitle] = useState('');
@@ -47,6 +48,32 @@ const DocumentWrite = () => {
             preview="edit"
             height={400}
             className="bg-background text-foreground"
+            toolbarHeight={40}
+            visibleDragbar={false}
+            textareaProps={{
+              placeholder: "Write your document here...",
+            }}
+            components={{
+              toolbar: (command, disabled, executeCommand) => {
+                if (command.name === 'bold' || command.name === 'italic' || command.name === 'link' || command.name === 'unordered-list' || command.name === 'ordered-list') {
+                  return (
+                    <button
+                      key={command.name}
+                      disabled={disabled}
+                      onClick={() => executeCommand(command)}
+                      className="p-2 hover:bg-secondary rounded-md transition-colors duration-200"
+                    >
+                      {command.name === 'bold' && <Bold size={16} />}
+                      {command.name === 'italic' && <Italic size={16} />}
+                      {command.name === 'link' && <Link size={16} />}
+                      {command.name === 'unordered-list' && <List size={16} />}
+                      {command.name === 'ordered-list' && <ListOrdered size={16} />}
+                    </button>
+                  );
+                }
+                return null;
+              },
+            }}
           />
         </div>
         <div>
