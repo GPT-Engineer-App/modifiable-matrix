@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,10 +7,24 @@ import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
 
+const templates = [
+  { id: 'blank', name: 'Blank Document', content: '# Start your document here' },
+  { id: 'meeting-minutes', name: 'Meeting Minutes', content: '# Meeting Minutes\n\n## Date: [Insert Date]\n\n## Attendees\n- [Name 1]\n- [Name 2]\n\n## Agenda\n1. [Topic 1]\n2. [Topic 2]\n\n## Discussion\n\n## Action Items\n- [ ] [Action 1]\n- [ ] [Action 2]\n\n## Next Meeting\n[Date and Time]' },
+  { id: 'project-proposal', name: 'Project Proposal', content: '# Project Proposal\n\n## Project Title\n[Insert Project Title]\n\n## Executive Summary\n[Brief overview of the project]\n\n## Objectives\n- [Objective 1]\n- [Objective 2]\n\n## Scope\n[Define the project scope]\n\n## Timeline\n[Outline key milestones and dates]\n\n## Budget\n[Provide a high-level budget overview]\n\n## Team\n[List key team members and roles]\n\n## Risks and Mitigation\n[Identify potential risks and mitigation strategies]\n\n## Conclusion\n[Summarize the proposal and next steps]' },
+];
+
 const DocumentWrite = () => {
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('# Start your document here');
+  const [content, setContent] = useState(templates[0].content);
   const [recipient, setRecipient] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
+
+  useEffect(() => {
+    const template = templates.find(t => t.id === selectedTemplate);
+    if (template) {
+      setContent(template.content);
+    }
+  }, [selectedTemplate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,15 +44,30 @@ const DocumentWrite = () => {
     <div className="container mx-auto p-4 max-w-2xl">
       <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
-          <Input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter document title"
-            required
-          />
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
+            <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a template" />
+              </SelectTrigger>
+              <SelectContent>
+                {templates.map((template) => (
+                  <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter document title"
+              required
+            />
+          </div>
         </div>
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-1">Content</label>
