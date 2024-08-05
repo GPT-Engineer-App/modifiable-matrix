@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2, PenTool } from 'lucide-react';
+import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -116,6 +117,7 @@ const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const recipientInfo = {
     R1: { name: "Robert Smith", email: "robert.smith@example.com", department: "Sales" },
@@ -145,9 +147,14 @@ const Index = () => {
     Draft: documents.filter(doc => doc.status === 'DRAFT').length,
   }), [documents]);
 
+  const handleDocumentComplete = useCallback(() => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
+      {showConfetti && <ReactConfetti />}
       <header className="bg-card border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -290,6 +297,17 @@ const Index = () => {
                                 setTimeout(() => {
                                   setDownloadingId(null);
                                 }, 2000); // Simulating download for 2 seconds
+                              } else if (doc.action === 'Sign') {
+                                // Simulate signing process
+                                setTimeout(() => {
+                                  handleDocumentComplete();
+                                  // Update the document status to 'COMPLETED'
+                                  // This is a simplified example. In a real app, you'd update the server state.
+                                  const updatedDocs = documents.map(d => 
+                                    d.id === doc.id ? {...d, status: 'COMPLETED', action: 'Download'} : d
+                                  );
+                                  // Update your state or refetch documents here
+                                }, 1000);
                               }
                             }}
                             disabled={downloadingId === doc.id}
