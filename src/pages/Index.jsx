@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
-import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const fetchDocuments = async ({ queryKey }) => {
