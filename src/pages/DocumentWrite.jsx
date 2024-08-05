@@ -8,9 +8,147 @@ import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
 
 const templates = [
-  { id: 'blank', name: 'Blank Document', content: '# Start your document here' },
-  { id: 'meeting-minutes', name: 'Meeting Minutes', content: '# Meeting Minutes\n\n## Date: [Insert Date]\n\n## Attendees\n- [Name 1]\n- [Name 2]\n\n## Agenda\n1. [Topic 1]\n2. [Topic 2]\n\n## Discussion\n\n## Action Items\n- [ ] [Action 1]\n- [ ] [Action 2]\n\n## Next Meeting\n[Date and Time]' },
-  { id: 'project-proposal', name: 'Project Proposal', content: '# Project Proposal\n\n## Project Title\n[Insert Project Title]\n\n## Executive Summary\n[Brief overview of the project]\n\n## Objectives\n- [Objective 1]\n- [Objective 2]\n\n## Scope\n[Define the project scope]\n\n## Timeline\n[Outline key milestones and dates]\n\n## Budget\n[Provide a high-level budget overview]\n\n## Team\n[List key team members and roles]\n\n## Risks and Mitigation\n[Identify potential risks and mitigation strategies]\n\n## Conclusion\n[Summarize the proposal and next steps]' },
+  { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
+  { id: 'compliance-checklist', name: 'Compliance Checklist', content: `# 🔍 Compliance Checklist
+
+## 📋 Overview
+Use this checklist to ensure all compliance requirements are met.
+
+---
+
+## 🔐 Data Protection
+- [ ] Encrypt sensitive data
+- [ ] Implement access controls
+- [ ] Regular security audits
+
+---
+
+## 📜 Policy Compliance
+- [ ] Review and update policies
+- [ ] Employee training completed
+- [ ] Documentation up to date
+
+---
+
+## 🌐 Regulatory Requirements
+- [ ] GDPR compliance
+- [ ] HIPAA compliance (if applicable)
+- [ ] Industry-specific regulations
+
+---
+
+## 🔄 Continuous Monitoring
+- [ ] Implement automated compliance checks
+- [ ] Schedule regular compliance meetings
+- [ ] Track and resolve compliance issues
+
+---
+
+## 📊 Reporting
+- [ ] Generate compliance reports
+- [ ] Review with stakeholders
+- [ ] Action plan for any gaps
+
+> **Note:** Customize this checklist based on your specific compliance needs.
+` },
+  { id: 'incident-response-plan', name: 'Incident Response Plan', content: `# 🚨 Incident Response Plan
+
+## 1. 🎯 Objective
+Provide a structured approach to handling security incidents.
+
+## 2. 📞 Emergency Contacts
+| Role | Name | Contact |
+|------|------|---------|
+| IT Security | John Doe | 555-0123 |
+| Legal | Jane Smith | 555-0456 |
+| PR | Bob Johnson | 555-0789 |
+
+## 3. 🔍 Incident Classification
+- **Level 1:** Minor - No data breach
+- **Level 2:** Moderate - Potential data exposure
+- **Level 3:** Critical - Confirmed data breach
+
+## 4. 📈 Response Workflow
+\`\`\`mermaid
+graph TD
+    A[Detect Incident] --> B{Assess Severity}
+    B --> C[Level 1]
+    B --> D[Level 2]
+    B --> E[Level 3]
+    C --> F[Contain & Resolve]
+    D --> G[Activate Response Team]
+    E --> H[Full Emergency Response]
+    F --> I[Document & Report]
+    G --> I
+    H --> I
+    I --> J[Review & Improve]
+\`\`\`
+
+## 5. 📝 Documentation
+- Incident details
+- Actions taken
+- Evidence collected
+
+## 6. 📊 Post-Incident Analysis
+- Root cause analysis
+- Lessons learned
+- Update procedures
+
+> **Remember:** Quick and coordinated response is key to minimizing impact.
+` },
+  { id: 'compliance-training', name: 'Compliance Training Module', content: `# 🎓 Compliance Training Module
+
+## 📚 Module Overview
+
+This training module covers key compliance areas for all employees.
+
+---
+
+## 🔑 Key Topics
+
+1. **Ethics and Code of Conduct**
+   - Company values
+   - Ethical decision-making
+
+2. **Data Privacy**
+   - Handling sensitive information
+   - GDPR basics
+
+3. **Information Security**
+   - Password best practices
+   - Phishing awareness
+
+4. **Anti-Discrimination and Harassment**
+   - Recognizing inappropriate behavior
+   - Reporting procedures
+
+---
+
+## 💡 Interactive Elements
+
+- **Quiz:** Test your knowledge
+- **Case Studies:** Apply concepts to real scenarios
+- **Role-Playing:** Practice handling compliance situations
+
+---
+
+## 📅 Training Schedule
+
+| Topic | Date | Duration |
+|-------|------|----------|
+| Ethics | Jan 15 | 1 hour |
+| Data Privacy | Jan 22 | 2 hours |
+| Info Security | Jan 29 | 1.5 hours |
+| Anti-Discrimination | Feb 5 | 1 hour |
+
+---
+
+## 🏆 Certification
+
+Complete all modules and pass the final assessment to receive your compliance certification.
+
+> **Note:** Compliance is everyone's responsibility. Stay informed and vigilant!
+` },
 ];
 
 const DocumentWrite = () => {
