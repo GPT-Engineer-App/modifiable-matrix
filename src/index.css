@@ -125,3 +125,29 @@
   scrollbar-width: thin;
   scrollbar-color: var(--muted-foreground) var(--secondary);
 }
+
+/* Markdown Editor Styles */
+.w-md-editor {
+  --md-editor-bg-color: hsl(var(--background));
+  --md-editor-text-color: hsl(var(--foreground));
+  --md-editor-border-color: hsl(var(--border));
+}
+
+.w-md-editor-text-pre > code,
+.w-md-editor-text-input {
+  color: hsl(var(--foreground)) !important;
+}
+
+.w-md-editor-toolbar {
+  background-color: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+}
+
+.w-md-editor-toolbar li > button {
+  color: hsl(var(--foreground));
+}
+
+.w-md-editor-preview {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}

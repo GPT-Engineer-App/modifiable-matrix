@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import MDEditor from '@uiw/react-md-editor';
+import ReactMarkdown from 'react-markdown';
 
 const DocumentWrite = () => {
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('# Start your document here');
   const [recipient, setRecipient] = useState('');
 
   const handleSubmit = (e) => {
@@ -40,14 +41,19 @@ const DocumentWrite = () => {
         </div>
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-1">Content</label>
-          <Textarea
-            id="content"
+          <MDEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter document content"
-            rows={10}
-            required
+            onChange={setContent}
+            preview="edit"
+            height={400}
+            className="bg-background text-foreground"
           />
+        </div>
+        <div>
+          <h3 className="text-lg font-medium mb-2">Preview</h3>
+          <div className="border border-border rounded-md p-4 bg-card">
+            <ReactMarkdown>{content}</ReactMarkdown>
+          </div>
         </div>
         <div>
           <label htmlFor="recipient" className="block text-sm font-medium mb-1">Recipient</label>
