@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown, File, User } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -104,9 +104,12 @@ const Index = () => {
     return data.documents.map(doc => ({
       id: doc.id,
       created: new Date(doc.createdAt).toLocaleString(),
+      updated: new Date(doc.updatedAt).toLocaleString(),
       title: doc.title,
-      recipient: doc.externalId || 'N/A',
+      recipients: doc.recipients.map(r => r.name).join(', '),
       status: doc.status,
+      fields: doc.fields.length,
+      files: doc.files.length,
       action: doc.status === 'COMPLETED' ? 'Download' : doc.status === 'PENDING' ? 'Sign' : 'Edit',
     }));
   }, [data]);
@@ -267,7 +270,7 @@ const Index = () => {
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    {['created', 'title', 'recipient', 'status'].map((column) => (
+                    {['created', 'updated', 'title', 'recipients', 'status', 'fields', 'files'].map((column) => (
                       <TableHead 
                         key={column}
                         className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
@@ -294,24 +297,32 @@ const Index = () => {
                       transition={{ duration: 0.2, delay: index * 0.05 }}
                     >
                       <TableCell className="text-muted-foreground">{doc.created}</TableCell>
+                      <TableCell className="text-muted-foreground">{doc.updated}</TableCell>
                       <TableCell>
                         <span
-                          className="cursor-pointer hover:text-primary transition-colors duration-200"
+                          className="cursor-pointer hover:text-primary transition-colors duration-200 flex items-center"
                           onClick={() => setSelectedDocumentId(doc.id)}
                         >
-                          {doc.title}
+                          <FileText className="w-4 h-4 mr-2" /> {doc.title}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="flex items-center justify-center">
+                          <File className="w-4 h-4 mr-2" /> {doc.fields}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="flex items-center justify-center">
+                          <File className="w-4 h-4 mr-2" /> {doc.files}
                         </span>
                       </TableCell>
                       <TableCell>
-                        {doc.recipient.split(', ').map((recipient, index) => (
-                          <span
-                            key={index}
-                            className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200"
-                            onClick={() => handleRecipientClick(recipient)}
-                          >
-                            {recipient}{index < doc.recipient.split(', ').length - 1 ? ', ' : ''}
-                          </span>
-                        ))}
+                        <span
+                          className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200 flex items-center"
+                          onClick={() => handleRecipientClick(doc.recipients)}
+                        >
+                          <User className="w-4 h-4 mr-2" /> {doc.recipients}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs ${
@@ -424,8 +435,18 @@ const Index = () => {
               <div className="mt-4 space-y-2">
                 <p><strong className="text-muted-foreground">Title:</strong> <span>{documentDetails.title}</span></p>
                 <p><strong className="text-muted-foreground">Created At:</strong> <span>{new Date(documentDetails.createdAt).toLocaleString()}</span></p>
+                <p><strong className="text-muted-foreground">Updated At:</strong> <span>{new Date(documentDetails.updatedAt).toLocaleString()}</span></p>
                 <p><strong className="text-muted-foreground">Status:</strong> <span>{documentDetails.status}</span></p>
-                <p><strong className="text-muted-foreground">External ID:</strong> <span>{documentDetails.externalId || 'N/A'}</span></p>
+                <p><strong className="text-muted-foreground">Fields:</strong> <span>{documentDetails.fields.length}</span></p>
+                <p><strong className="text-muted-foreground">Files:</strong> <span>{documentDetails.files.length}</span></p>
+                <p><strong className="text-muted-foreground">Recipients:</strong></p>
+                <ul className="list-disc list-inside pl-4">
+                  {documentDetails.recipients.map((recipient, index) => (
+                    <li key={index}>
+                      {recipient.name} ({recipient.email}) - {recipient.status}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : (
               <p>No details available</p>
