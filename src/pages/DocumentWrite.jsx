@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
@@ -179,7 +179,6 @@ const DocumentWrite = () => {
   const [recipients, setRecipients] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
   const { theme } = useTheme();
-  const { toast } = useToast();
 
   const handleNextStep = () => {
     if (step < 3) setStep(step + 1);
@@ -210,8 +209,10 @@ const DocumentWrite = () => {
         navigate('/');
       }, 500);
     } catch (error) {
-      toast.error("Error", {
+      toast({
+        title: "Error",
         description: "Failed to create and send the document. Please try again.",
+        variant: "destructive",
       });
       setIsSending(false);
     }
