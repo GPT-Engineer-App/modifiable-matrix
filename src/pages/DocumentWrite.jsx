@@ -205,13 +205,14 @@ const DocumentWrite = () => {
         description: "Your document has been successfully created and sent to the recipients.",
       });
       
-      // Navigate back to home page
-      navigate('/');
+      // Navigate back to home page after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     } catch (error) {
       toast.error("Error", {
         description: "Failed to create and send the document. Please try again.",
       });
-    } finally {
       setIsSending(false);
     }
   };
