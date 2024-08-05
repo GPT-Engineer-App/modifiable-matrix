@@ -6,6 +6,7 @@ import { toast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 const templates = [
   { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
@@ -156,6 +157,7 @@ const DocumentWrite = () => {
   const [content, setContent] = useState(templates[0].content);
   const [recipient, setRecipient] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const template = templates.find(t => t.id === selectedTemplate);
@@ -179,14 +181,14 @@ const DocumentWrite = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
+    <div className="container mx-auto p-4 max-w-2xl bg-background text-foreground">
       <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-4">
           <div>
             <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
             <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-secondary">
                 <SelectValue placeholder="Select a template" />
               </SelectTrigger>
               <SelectContent>
@@ -204,6 +206,7 @@ const DocumentWrite = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter document title"
               required
+              className="bg-secondary"
             />
           </div>
         </div>
@@ -255,12 +258,12 @@ const DocumentWrite = () => {
                 ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4" {...props} />,
                 ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4" {...props} />,
                 li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-                a: ({ node, ...props }) => <a className="text-blue-500 hover:underline" {...props} />,
-                blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4" {...props} />,
+                a: ({ node, ...props }) => <a className="text-primary hover:underline" {...props} />,
+                blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-border pl-4 italic mb-4" {...props} />,
                 code: ({ node, inline, ...props }) => 
                   inline 
-                    ? <code className="bg-gray-100 rounded px-1 py-0.5" {...props} />
-                    : <pre className="bg-gray-100 rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
+                    ? <code className="bg-secondary rounded px-1 py-0.5" {...props} />
+                    : <pre className="bg-secondary rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
               }}
             >
               {content}
@@ -270,7 +273,7 @@ const DocumentWrite = () => {
         <div>
           <label htmlFor="recipient" className="block text-sm font-medium mb-1">Recipient</label>
           <Select onValueChange={setRecipient} required>
-            <SelectTrigger>
+            <SelectTrigger className="bg-secondary">
               <SelectValue placeholder="Select recipient" />
             </SelectTrigger>
             <SelectContent>
@@ -281,7 +284,7 @@ const DocumentWrite = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="w-full">Create Document</Button>
+        <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Create Document</Button>
       </form>
     </div>
   );
