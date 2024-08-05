@@ -11,7 +11,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <TooltipProvider>
-        <Toaster />
+        <Toaster position="top-right" />
         <BrowserRouter>
           <Routes>
             {navItems.map(({ to, page }) => (

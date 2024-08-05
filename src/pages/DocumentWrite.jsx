@@ -197,17 +197,23 @@ const DocumentWrite = () => {
     setIsSending(true);
     console.log({ title, content, recipients });
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSending(false);
-    toast({
-      title: "Document Created and Sent",
-      description: "Your document has been successfully created and sent to the recipients.",
-    });
-    
-    // Navigate back to home page
-    navigate('/');
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast.success("Document Created and Sent", {
+        description: "Your document has been successfully created and sent to the recipients.",
+      });
+      
+      // Navigate back to home page
+      navigate('/');
+    } catch (error) {
+      toast.error("Error", {
+        description: "Failed to create and send the document. Please try again.",
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const renderStep = () => {
