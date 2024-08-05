@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
-import { Bold, Italic, Link, List, ListOrdered } from 'lucide-react';
+import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const templates = [
   { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
@@ -153,53 +154,42 @@ Complete all modules and pass the final assessment to receive your compliance ce
 ];
 
 const DocumentWrite = () => {
+  const [step, setStep] = useState(1);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState(templates[0].content);
-  const [recipient, setRecipient] = useState('');
+  const [recipients, setRecipients] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
   const { theme } = useTheme();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const template = templates.find(t => t.id === selectedTemplate);
-    if (template) {
-      setContent(template.content);
-    }
-  }, [selectedTemplate]);
+  const handleNextStep = () => {
+    if (step < 3) setStep(step + 1);
+  };
+
+  const handlePreviousStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send the document to your backend
-    console.log({ title, content, recipient });
+    console.log({ title, content, recipients });
     toast({
-      title: "Document Created",
-      description: "Your document has been successfully created and saved as a draft.",
+      title: "Document Sent",
+      description: "Your document has been successfully sent to the recipients.",
     });
-    // Reset form
+    // Reset form and go back to step 1
     setTitle('');
-    setContent('');
-    setRecipient('');
+    setContent(templates[0].content);
+    setRecipients([]);
+    setSelectedTemplate(templates[0].id);
+    setStep(1);
   };
 
-  return (
-    <div className="container mx-auto p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex space-x-4">
-          <div className="w-1/3 space-y-4">
-            <div>
-              <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
-              <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                <SelectTrigger className="bg-secondary text-secondary-foreground">
-                  <SelectValue placeholder="Select a template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-4">
             <div>
               <label htmlFor="title" className="block text-sm font-medium mb-1">Title</label>
               <Input
@@ -212,22 +202,26 @@ const DocumentWrite = () => {
               />
             </div>
             <div>
-              <label htmlFor="recipient" className="block text-sm font-medium mb-1">Recipient</label>
-              <Select onValueChange={setRecipient} required>
-                <SelectTrigger className="bg-secondary">
-                  <SelectValue placeholder="Select recipient" />
+              <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
+              <Select value={selectedTemplate} onValueChange={(value) => {
+                setSelectedTemplate(value);
+                setContent(templates.find(t => t.id === value).content);
+              }}>
+                <SelectTrigger className="bg-secondary text-secondary-foreground">
+                  <SelectValue placeholder="Select a template" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="R1">Robert Smith</SelectItem>
-                  <SelectItem value="R2">Emma Johnson</SelectItem>
-                  <SelectItem value="HR">Human Resources</SelectItem>
-                  <SelectItem value="OM">Operations Manager</SelectItem>
+                  {templates.map((template) => (
+                    <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-yellow-400 text-black hover:bg-yellow-500">Create Document</Button>
           </div>
-          <div className="w-2/3 flex space-x-4">
+        );
+      case 2:
+        return (
+          <div className="flex space-x-4">
             <div className="w-1/2">
               <label htmlFor="content" className="block text-sm font-medium mb-1">Content</label>
               <MDEditor
@@ -289,8 +283,81 @@ const DocumentWrite = () => {
               </div>
             </div>
           </div>
+        );
+      case 3:
+        return (
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="recipients" className="block text-sm font-medium mb-1">Recipients</label>
+              <Select onValueChange={(value) => setRecipients([...recipients, value])} value="">
+                <SelectTrigger className="bg-secondary">
+                  <SelectValue placeholder="Add recipient" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="R1">Robert Smith</SelectItem>
+                  <SelectItem value="R2">Emma Johnson</SelectItem>
+                  <SelectItem value="HR">Human Resources</SelectItem>
+                  <SelectItem value="OM">Operations Manager</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium mb-2">Selected Recipients:</h3>
+              <ul className="list-disc list-inside">
+                {recipients.map((recipient, index) => (
+                  <li key={index}>{recipient}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4 bg-background text-foreground">
+      <h1 className="text-2xl font-bold mb-4">Create New Document</h1>
+      <div className="mb-4 flex justify-between items-center">
+        <div className="space-x-2">
+          {[1, 2, 3].map((s) => (
+            <Button
+              key={s}
+              variant={s === step ? 'default' : 'outline'}
+              className={s === step ? 'bg-primary text-primary-foreground' : ''}
+              onClick={() => setStep(s)}
+            >
+              Step {s}
+            </Button>
+          ))}
         </div>
-      </form>
+        <div className="space-x-2">
+          {step > 1 && (
+            <Button onClick={handlePreviousStep} variant="outline">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+            </Button>
+          )}
+          {step < 3 ? (
+            <Button onClick={handleNextStep}>
+              Next <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} className="bg-primary text-primary-foreground">
+              Send Document
+            </Button>
+          )}
+        </div>
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.2 }}
+        >
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
