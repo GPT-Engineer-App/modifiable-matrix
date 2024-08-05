@@ -75,32 +75,6 @@ const Index = () => {
     },
   });
 
-  const documents = data?.documents || [];
-
-  useEffect(() => {
-    if (location.state?.documentAdded) {
-      toast({
-        title: "Success",
-        description: "Document added successfully",
-        variant: "default",
-      });
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, toast, navigate]);
-
-  const { data: documentDetails, isLoading: isLoadingDetails } = useQuery({
-    queryKey: ['documentDetails', selectedDocumentId],
-    queryFn: () => fetchDocumentDetails(selectedDocumentId),
-    enabled: !!selectedDocumentId,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to load document details. Please try again later.",
-        variant: "destructive",
-      });
-    },
-  });
-
   const documents = useMemo(() => {
     if (!data || !data.documents) return [];
     return data.documents.map(doc => ({
@@ -171,11 +145,11 @@ const Index = () => {
   }, [documents, activeFilter, sortColumn, sortDirection]);
 
   const counts = useMemo(() => ({
-    All: documents?.length || 0,
-    Inbox: documents?.filter(doc => doc.status !== 'DRAFT')?.length || 0,
-    Pending: documents?.filter(doc => doc.status === 'PENDING')?.length || 0,
-    Completed: documents?.filter(doc => doc.status === 'COMPLETED')?.length || 0,
-    Draft: documents?.filter(doc => doc.status === 'DRAFT')?.length || 0,
+    All: documents.length,
+    Inbox: documents.filter(doc => doc.status !== 'DRAFT').length,
+    Pending: documents.filter(doc => doc.status === 'PENDING').length,
+    Completed: documents.filter(doc => doc.status === 'COMPLETED').length,
+    Draft: documents.filter(doc => doc.status === 'DRAFT').length,
   }), [documents]);
 
   const handleDocumentComplete = useCallback(() => {
