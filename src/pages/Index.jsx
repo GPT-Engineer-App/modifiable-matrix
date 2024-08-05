@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const fetchDocuments = async ({ queryKey }) => {
@@ -49,6 +50,17 @@ const Index = () => {
   const perPage = 20;
   const { toast } = useToast();
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.documentAdded) {
+      toast({
+        title: "Success",
+        description: "Document added successfully",
+        variant: "default",
+      });
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, toast, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['documents', page, perPage],
