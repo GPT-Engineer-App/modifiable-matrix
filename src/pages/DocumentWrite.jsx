@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
 import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
@@ -191,6 +191,8 @@ const DocumentWrite = () => {
   const navigate = useNavigate();
   const [isSending, setIsSending] = useState(false);
 
+  const { toast } = useToast();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSending(true);
@@ -198,6 +200,11 @@ const DocumentWrite = () => {
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    toast({
+      title: "Document Sent",
+      description: "Your document has been successfully sent.",
+    });
     
     // Navigate back to home page after a short delay
     setTimeout(() => {

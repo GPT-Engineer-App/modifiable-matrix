@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Toast } from "@/components/ui/toast";
 
 const fetchDocuments = async ({ queryKey }) => {
   const [_, page, perPage] = queryKey;
@@ -150,11 +151,15 @@ const Index = () => {
   const handleDocumentComplete = useCallback(() => {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
-  }, []);
+    toast({
+      title: "Document Completed",
+      description: "The document has been successfully signed and completed.",
+    });
+  }, [toast]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      {showConfetti && <ReactConfetti />}
+      {showConfetti && <ReactConfetti recycle={false} />}
       <header className="bg-card border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -296,6 +301,10 @@ const Index = () => {
                                 setDownloadingId(doc.id);
                                 setTimeout(() => {
                                   setDownloadingId(null);
+                                  toast({
+                                    title: "Download Complete",
+                                    description: "The document has been successfully downloaded.",
+                                  });
                                 }, 2000); // Simulating download for 2 seconds
                               } else if (doc.action === 'Sign') {
                                 // Simulate signing process
