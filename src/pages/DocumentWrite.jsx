@@ -137,11 +137,29 @@ This training module covers key compliance areas for all employees.
 ## 📅 Training Schedule
 
 | Topic | Date | Duration |
-|-------|------|----------|
+|:------|:-----|:---------|
 | Ethics | Jan 15 | 1 hour |
 | Data Privacy | Jan 22 | 2 hours |
 | Info Security | Jan 29 | 1.5 hours |
 | Anti-Discrimination | Feb 5 | 1 hour |
+
+<div className="my-4 overflow-x-auto">
+  <table className="min-w-full bg-secondary rounded-lg overflow-hidden">
+    <thead className="bg-primary text-primary-foreground">
+      <tr>
+        <th className="px-4 py-2 text-left">Topic</th>
+        <th className="px-4 py-2 text-left">Date</th>
+        <th className="px-4 py-2 text-left">Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td className="px-4 py-2 border-t border-border">Ethics</td><td className="px-4 py-2 border-t border-border">Jan 15</td><td className="px-4 py-2 border-t border-border">1 hour</td></tr>
+      <tr><td className="px-4 py-2 border-t border-border">Data Privacy</td><td className="px-4 py-2 border-t border-border">Jan 22</td><td className="px-4 py-2 border-t border-border">2 hours</td></tr>
+      <tr><td className="px-4 py-2 border-t border-border">Info Security</td><td className="px-4 py-2 border-t border-border">Jan 29</td><td className="px-4 py-2 border-t border-border">1.5 hours</td></tr>
+      <tr><td className="px-4 py-2 border-t border-border">Anti-Discrimination</td><td className="px-4 py-2 border-t border-border">Feb 5</td><td className="px-4 py-2 border-t border-border">1 hour</td></tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
