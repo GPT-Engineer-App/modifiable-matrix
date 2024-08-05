@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import MDEditor from '@uiw/react-md-editor';
 import ReactMarkdown from 'react-markdown';
-import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Bold, Italic, Link, List, ListOrdered, ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const templates = [
   { id: 'blank', name: 'Blank Document', content: '# Start your compliance document here' },
@@ -159,6 +160,7 @@ const DocumentWrite = () => {
   const [content, setContent] = useState(templates[0].content);
   const [recipients, setRecipients] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { theme } = useTheme();
   const { toast } = useToast();
 
@@ -201,21 +203,31 @@ const DocumentWrite = () => {
                 className="bg-secondary text-secondary-foreground"
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
-              <Select value={selectedTemplate} onValueChange={(value) => {
-                setSelectedTemplate(value);
-                setContent(templates.find(t => t.id === value).content);
-              }}>
-                <SelectTrigger className="bg-secondary text-secondary-foreground">
-                  <SelectValue placeholder="Select a template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center space-x-2">
+                <Select value={selectedTemplate} onValueChange={(value) => {
+                  setSelectedTemplate(value);
+                  setContent(templates.find(t => t.id === value).content);
+                }}>
+                  <SelectTrigger className="bg-secondary text-secondary-foreground flex-grow">
+                    <SelectValue placeholder="Select a template" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {templates.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsPreviewOpen(true)}
+                  className="bg-secondary text-secondary-foreground"
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         );
@@ -359,6 +371,34 @@ const DocumentWrite = () => {
         </motion.div>
       </AnimatePresence>
     </div>
+    <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Template Preview</DialogTitle>
+        </DialogHeader>
+        <div className="mt-4">
+          <ReactMarkdown
+            components={{
+              h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mb-2" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="text-xl font-bold mb-2" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="text-lg font-bold mb-2" {...props} />,
+              p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4" {...props} />,
+              ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4" {...props} />,
+              li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+              a: ({ node, ...props }) => <a className="text-primary hover:underline" {...props} />,
+              blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-border pl-4 italic mb-4" {...props} />,
+              code: ({ node, inline, ...props }) => 
+                inline 
+                  ? <code className="bg-secondary rounded px-1 py-0.5" {...props} />
+                  : <pre className="bg-secondary rounded p-2 mb-4 overflow-x-auto"><code {...props} /></pre>,
+            }}
+          >
+            {templates.find(t => t.id === selectedTemplate).content}
+          </ReactMarkdown>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
