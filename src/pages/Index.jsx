@@ -75,6 +75,8 @@ const Index = () => {
     },
   });
 
+  const documents = data?.documents || [];
+
   useEffect(() => {
     if (location.state?.documentAdded) {
       toast({
@@ -147,18 +149,18 @@ const Index = () => {
 
   const filteredDocuments = useMemo(() => {
     if (!Array.isArray(documents)) return [];
-  
+
     let filtered = activeFilter === 'All' 
       ? documents 
       : documents.filter(doc => {
-          if (activeFilter === 'Inbox') return doc.status !== 'DRAFT';
-          return doc.status && doc.status.toUpperCase() === activeFilter.toUpperCase();
+          if (activeFilter === 'Inbox') return doc?.status !== 'DRAFT';
+          return doc?.status && doc.status.toUpperCase() === activeFilter.toUpperCase();
         });
 
     if (sortColumn) {
       filtered.sort((a, b) => {
-        const aValue = a[sortColumn] ?? '';
-        const bValue = b[sortColumn] ?? '';
+        const aValue = a?.[sortColumn] ?? '';
+        const bValue = b?.[sortColumn] ?? '';
         if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
         return 0;
@@ -169,11 +171,11 @@ const Index = () => {
   }, [documents, activeFilter, sortColumn, sortDirection]);
 
   const counts = useMemo(() => ({
-    All: documents.length,
-    Inbox: documents.filter(doc => doc.status !== 'DRAFT').length,
-    Pending: documents.filter(doc => doc.status === 'PENDING').length,
-    Completed: documents.filter(doc => doc.status === 'COMPLETED').length,
-    Draft: documents.filter(doc => doc.status === 'DRAFT').length,
+    All: documents?.length || 0,
+    Inbox: documents?.filter(doc => doc.status !== 'DRAFT')?.length || 0,
+    Pending: documents?.filter(doc => doc.status === 'PENDING')?.length || 0,
+    Completed: documents?.filter(doc => doc.status === 'COMPLETED')?.length || 0,
+    Draft: documents?.filter(doc => doc.status === 'DRAFT')?.length || 0,
   }), [documents]);
 
   const handleDocumentComplete = useCallback(() => {
@@ -206,8 +208,18 @@ const Index = () => {
       </header>
 
       <main className="flex-grow container mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex space-x-2">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="w-8 h-8 animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">
+            An error occurred while loading documents. Please try again later.
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex space-x-2">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -404,6 +416,8 @@ const Index = () => {
             </Button>
           </div>
         </div>
+          </>
+        )}
       </main>
 
       <>
