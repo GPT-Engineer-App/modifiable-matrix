@@ -49,7 +49,7 @@ const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [page, setPage] = useState(1);
-  const perPage = 20;
+  const [perPage, setPerPage] = useState(20);
   const { toast } = useToast();
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
 
@@ -64,17 +64,21 @@ const Index = () => {
     }
   }, [location, toast, navigate]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['documents', page, perPage],
     queryFn: fetchDocuments,
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to load documents. Please try again later.",
+        description: error.message || "Failed to load documents. Please try again later.",
         variant: "destructive",
       });
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [page, perPage, refetch]);
 
   const { data: documentDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ['documentDetails', selectedDocumentId],
@@ -407,7 +411,19 @@ const Index = () => {
           </motion.div>
         </AnimatePresence>
         <div className="flex justify-between items-center mt-4 text-muted-foreground">
-          <p>Showing {filteredDocuments.length} results.</p>
+          <div className="flex items-center space-x-4">
+            <p>Showing {filteredDocuments.length} results.</p>
+            <Select value={perPage} onValueChange={(value) => setPerPage(Number(value))}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select page size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 per page</SelectItem>
+                <SelectItem value="20">20 per page</SelectItem>
+                <SelectItem value="50">50 per page</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center space-x-2">
             <span>Page {page} of {totalPages}</span>
             <Button
@@ -428,6 +444,15 @@ const Index = () => {
             </Button>
           </div>
         </div>
+        {error && (
+          <Toast variant="destructive">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>Failed to load documents. Please try again.</span>
+            </div>
+            <Button size="sm" onClick={() => refetch()}>Retry</Button>
+          </Toast>
+        )}
           </>
         )}
       </main>
