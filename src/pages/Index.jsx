@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown, File, User, GripVertical } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -308,14 +308,11 @@ const Index = () => {
                     {(provided) => (
                       <TableBody {...provided.droppableProps} ref={provided.innerRef}>
                         {filteredDocuments.map((doc, index) => (
-                          <Draggable key={doc?.id || index} draggableId={doc?.id || `doc-${index}`} index={index}>
+                          <Draggable key={doc?.id || `doc-${index}`} draggableId={doc?.id || `doc-${index}`} index={index}>
                             {(provided, snapshot) => (
-                              <motion.tr
+                              <TableRow
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.2, delay: index * 0.05 }}
                                 className={snapshot.isDragging ? "bg-secondary" : ""}
                               >
                                 <TableCell {...provided.dragHandleProps} className="w-10">
@@ -396,7 +393,7 @@ const Index = () => {
                           </Button>
                         )}
                       </TableCell>
-                    </motion.tr>
+                    </TableRow>
                             )}
                           </Draggable>
                         ))}
