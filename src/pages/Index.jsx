@@ -2,7 +2,8 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown, File, User } from 'lucide-react';
+import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown, File, User, GripVertical } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -127,8 +128,13 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
-  const filteredDocuments = useMemo(() => {
-    if (!Array.isArray(documents)) return [];
+  const [filteredDocuments, setFilteredDocuments] = useState([]);
+
+  useEffect(() => {
+    if (!Array.isArray(documents)) {
+      setFilteredDocuments([]);
+      return;
+    }
 
     let filtered = activeFilter === 'All' 
       ? documents 
@@ -147,8 +153,20 @@ const Index = () => {
       });
     }
 
-    return filtered;
+    setFilteredDocuments(filtered);
   }, [documents, activeFilter, sortColumn, sortDirection]);
+
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = Array.from(filteredDocuments);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setFilteredDocuments(items);
+  };
 
   const counts = useMemo(() => ({
     All: documents?.length || 0,
@@ -263,35 +281,46 @@ const Index = () => {
             className="overflow-hidden"
           >
             <div className="max-h-[calc(100vh-300px)] overflow-auto custom-scrollbar">
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow>
-                    {['created', 'updated', 'title', 'recipients', 'status', 'fields', 'files'].map((column) => (
-                      <TableHead 
-                        key={column}
-                        className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
-                        onClick={() => handleSort(column)}
-                      >
-                        <div className="flex items-center">
-                          {column.charAt(0).toUpperCase() + column.slice(1)}
-                          {sortColumn === column && (
-                            sortDirection === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />
-                          )}
-                          {sortColumn !== column && <ArrowUpDown className="ml-2 h-4 w-4 opacity-0 group-hover:opacity-100" />}
-                        </div>
-                      </TableHead>
-                    ))}
-                    <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDocuments.map((doc, index) => (
-                    <motion.tr
-                      key={doc?.id || index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.05 }}
-                    >
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-10"></TableHead>
+                      {['created', 'updated', 'title', 'recipients', 'status', 'fields', 'files'].map((column) => (
+                        <TableHead 
+                          key={column}
+                          className="text-muted-foreground sticky top-0 bg-background cursor-pointer"
+                          onClick={() => handleSort(column)}
+                        >
+                          <div className="flex items-center">
+                            {column.charAt(0).toUpperCase() + column.slice(1)}
+                            {sortColumn === column && (
+                              sortDirection === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />
+                            )}
+                            {sortColumn !== column && <ArrowUpDown className="ml-2 h-4 w-4 opacity-0 group-hover:opacity-100" />}
+                          </div>
+                        </TableHead>
+                      ))}
+                      <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <Droppable droppableId="documents">
+                    {(provided) => (
+                      <TableBody {...provided.droppableProps} ref={provided.innerRef}>
+                        {filteredDocuments.map((doc, index) => (
+                          <Draggable key={doc?.id || index} draggableId={doc?.id || `doc-${index}`} index={index}>
+                            {(provided, snapshot) => (
+                              <motion.tr
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: index * 0.05 }}
+                                className={snapshot.isDragging ? "bg-secondary" : ""}
+                              >
+                                <TableCell {...provided.dragHandleProps} className="w-10">
+                                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                                </TableCell>
                       <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
                       <TableCell className="text-muted-foreground">{doc?.updated}</TableCell>
                       <TableCell>
@@ -368,9 +397,15 @@ const Index = () => {
                         )}
                       </TableCell>
                     </motion.tr>
-                  ))}
-                </TableBody>
-              </Table>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </TableBody>
+                    )}
+                  </Droppable>
+                </Table>
+              </DragDropContext>
             </div>
           </motion.div>
         </AnimatePresence>
