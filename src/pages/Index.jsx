@@ -84,11 +84,11 @@ const Index = () => {
   const documents = useMemo(() => {
     if (!data || !data.documents) return [];
     return data.documents.map(doc => ({
-      id: doc.id,
+      id: doc.id || '',
       created: doc.createdAt ? new Date(doc.createdAt).toLocaleString() : 'N/A',
       updated: doc.updatedAt ? new Date(doc.updatedAt).toLocaleString() : 'N/A',
       title: doc.title || 'Untitled',
-      recipients: Array.isArray(doc.recipients) ? doc.recipients.map(r => r.name || 'Unknown').join(', ') : '',
+      recipients: Array.isArray(doc.recipients) ? doc.recipients.map(r => r?.name || 'Unknown').join(', ') : '',
       status: doc.status || 'Unknown',
       fields: Array.isArray(doc.fields) ? doc.fields.length : 0,
       files: Array.isArray(doc.files) ? doc.files.length : 0,
@@ -152,10 +152,10 @@ const Index = () => {
 
   const counts = useMemo(() => ({
     All: documents?.length || 0,
-    Inbox: documents?.filter(doc => doc.status !== 'DRAFT')?.length || 0,
-    Pending: documents?.filter(doc => doc.status === 'PENDING')?.length || 0,
-    Completed: documents?.filter(doc => doc.status === 'COMPLETED')?.length || 0,
-    Draft: documents?.filter(doc => doc.status === 'DRAFT')?.length || 0,
+    Inbox: documents?.filter(doc => doc?.status !== 'DRAFT')?.length || 0,
+    Pending: documents?.filter(doc => doc?.status === 'PENDING')?.length || 0,
+    Completed: documents?.filter(doc => doc?.status === 'COMPLETED')?.length || 0,
+    Draft: documents?.filter(doc => doc?.status === 'DRAFT')?.length || 0,
   }), [documents]);
 
   const handleDocumentComplete = useCallback(() => {
@@ -287,51 +287,51 @@ const Index = () => {
                 <TableBody>
                   {filteredDocuments.map((doc, index) => (
                     <motion.tr
-                      key={doc.id}
+                      key={doc?.id || index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
                     >
-                      <TableCell className="text-muted-foreground">{doc.created}</TableCell>
-                      <TableCell className="text-muted-foreground">{doc.updated}</TableCell>
+                      <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
+                      <TableCell className="text-muted-foreground">{doc?.updated}</TableCell>
                       <TableCell>
                         <span
                           className="cursor-pointer hover:text-primary transition-colors duration-200 flex items-center"
-                          onClick={() => setSelectedDocumentId(doc.id)}
+                          onClick={() => setSelectedDocumentId(doc?.id)}
                         >
-                          <FileText className="w-4 h-4 mr-2" /> {doc.title}
+                          <FileText className="w-4 h-4 mr-2" /> {doc?.title}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
                         <span className="flex items-center justify-center">
-                          <File className="w-4 h-4 mr-2" /> {doc.fields}
+                          <File className="w-4 h-4 mr-2" /> {doc?.fields}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
                         <span className="flex items-center justify-center">
-                          <File className="w-4 h-4 mr-2" /> {doc.files}
+                          <File className="w-4 h-4 mr-2" /> {doc?.files}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span
                           className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200 flex items-center"
-                          onClick={() => handleRecipientClick(doc.recipients)}
+                          onClick={() => handleRecipientClick(doc?.recipients)}
                         >
-                          <User className="w-4 h-4 mr-2" /> {doc.recipients}
+                          <User className="w-4 h-4 mr-2" /> {doc?.recipients}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          doc.status === 'COMPLETED' ? 'bg-green-500/20 text-green-500' :
-                          doc.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-500' :
-                          doc.status === 'DRAFT' ? 'bg-blue-500/20 text-blue-500' :
+                          doc?.status === 'COMPLETED' ? 'bg-green-500/20 text-green-500' :
+                          doc?.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-500' :
+                          doc?.status === 'DRAFT' ? 'bg-blue-500/20 text-blue-500' :
                           'bg-gray-500/20 text-gray-500'
                         }`}>
-                          {doc.status.charAt(0) + doc.status.slice(1).toLowerCase()}
+                          {doc?.status ? doc.status.charAt(0) + doc.status.slice(1).toLowerCase() : 'Unknown'}
                         </span>
                       </TableCell>
                       <TableCell>
-                        {doc.action && (
+                        {doc?.action && (
                           <Button
                             variant="secondary"
                             size="sm"
@@ -358,12 +358,12 @@ const Index = () => {
                                 }, 1000);
                               }
                             }}
-                            disabled={downloadingId === doc.id}
+                            disabled={downloadingId === doc?.id}
                           >
-                            {downloadingId === doc.id ? (
+                            {downloadingId === doc?.id ? (
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : null}
-                            {downloadingId === doc.id ? 'Downloading...' : doc.action}
+                            {downloadingId === doc?.id ? 'Downloading...' : doc.action}
                           </Button>
                         )}
                       </TableCell>
