@@ -276,19 +276,10 @@ const Index = () => {
             <PenTool className="w-4 h-4 mr-2" /> New Document
           </Button>
         </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeFilter}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="max-h-[calc(100vh-300px)] overflow-auto custom-scrollbar">
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Table className="w-full">
-                  <TableHeader>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="max-h-[calc(100vh-300px)] overflow-auto">
+            <table className="w-full border-collapse">
+              <thead>
                     <TableRow>
                       <TableHead className="w-10">
                         <span className="sr-only">Drag handle</span>
@@ -310,19 +301,19 @@ const Index = () => {
                       ))}
                       <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
                     </TableRow>
-                  </TableHeader>
-                  <Droppable droppableId="documents" direction="vertical">
-                    {(provided) => (
-                      <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                        {filteredDocuments.map((doc, index) => (
-                          <Draggable key={doc?.id || `doc-${index}`} draggableId={doc?.id || `doc-${index}`} index={index}>
-                            {(provided, snapshot) => (
-                              <TableRow
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                className={`${snapshot.isDragging ? "bg-secondary" : ""} transition-colors`}
-                              >
-                                <TableCell {...provided.dragHandleProps} className="w-10 cursor-move">
+              </thead>
+              <Droppable droppableId="documents">
+                {(provided) => (
+                  <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                    {filteredDocuments.map((doc, index) => (
+                      <Draggable key={doc?.id || `doc-${index}`} draggableId={doc?.id || `doc-${index}`} index={index}>
+                        {(provided, snapshot) => (
+                          <tr
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`${snapshot.isDragging ? "bg-secondary" : ""} transition-colors`}
+                          >
+                            <td {...provided.dragHandleProps} className="w-10 cursor-move p-2">
                                   <GripVertical className="w-4 h-4 text-muted-foreground mx-auto" />
                                 </TableCell>
                       <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
@@ -405,14 +396,12 @@ const Index = () => {
                           </Draggable>
                         ))}
                         {provided.placeholder}
-                      </TableBody>
-                    )}
-                  </Droppable>
-                </Table>
-              </DragDropContext>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+                  </tbody>
+                )}
+              </Droppable>
+            </table>
+          </div>
+        </DragDropContext>
         <div className="flex justify-between items-center mt-4 text-muted-foreground">
           <div className="flex items-center space-x-4">
             <p>Showing {filteredDocuments.length} results.</p>
