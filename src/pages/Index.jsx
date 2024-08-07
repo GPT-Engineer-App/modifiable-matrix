@@ -308,15 +308,15 @@ const Index = () => {
                     {filteredDocuments.map((doc, index) => (
                       <Draggable key={doc?.id || `doc-${index}`} draggableId={doc?.id || `doc-${index}`} index={index}>
                         {(provided, snapshot) => (
-                          <tr
+                          <TableRow
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             className={`${snapshot.isDragging ? "bg-secondary" : ""} transition-colors`}
                           >
-                            <td {...provided.dragHandleProps} className="w-10 cursor-move p-2">
-                                  <GripVertical className="w-4 h-4 text-muted-foreground mx-auto" />
-                                </TableCell>
-                      <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
+                            <TableCell {...provided.dragHandleProps} className="w-10 cursor-move p-2">
+                              <GripVertical className="w-4 h-4 text-muted-foreground mx-auto" />
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
                       <TableCell className="text-muted-foreground">{doc?.updated}</TableCell>
                       <TableCell>
                         <span
@@ -392,8 +392,8 @@ const Index = () => {
                         )}
                       </TableCell>
                     </TableRow>
-                            )}
-                          </Draggable>
+                  )}
+                </Draggable>
                         ))}
                         {provided.placeholder}
                   </tbody>
