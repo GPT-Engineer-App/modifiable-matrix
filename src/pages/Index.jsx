@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Clock, CheckCircle, FileText, Loader2, PenTool, ArrowUpDown, ArrowUp, ArrowDown, File, User, GripVertical } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ReactConfetti from 'react-confetti';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -161,7 +161,7 @@ const Index = () => {
     setFilteredDocuments(filtered);
   }, [documents, activeFilter, sortColumn, sortDirection]);
 
-  const onDragEnd = (result) => {
+  const onDragEnd = useCallback((result) => {
     if (!result.destination) {
       return;
     }
@@ -171,7 +171,7 @@ const Index = () => {
     items.splice(result.destination.index, 0, reorderedItem);
 
     setFilteredDocuments(items);
-  };
+  }, [filteredDocuments]);
 
   const counts = useMemo(() => ({
     All: documents?.length || 0,
@@ -290,7 +290,9 @@ const Index = () => {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-10"></TableHead>
+                      <TableHead className="w-10">
+                        <span className="sr-only">Drag handle</span>
+                      </TableHead>
                       {['created', 'updated', 'title', 'recipients', 'status', 'fields', 'files'].map((column) => (
                         <TableHead 
                           key={column}
@@ -309,7 +311,7 @@ const Index = () => {
                       <TableHead className="text-muted-foreground sticky top-0 bg-background">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <Droppable droppableId="documents">
+                  <Droppable droppableId="documents" direction="vertical">
                     {(provided) => (
                       <TableBody {...provided.droppableProps} ref={provided.innerRef}>
                         {filteredDocuments.map((doc, index) => (
@@ -318,10 +320,10 @@ const Index = () => {
                               <TableRow
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
-                                className={snapshot.isDragging ? "bg-secondary" : ""}
+                                className={`${snapshot.isDragging ? "bg-secondary" : ""} transition-colors`}
                               >
-                                <TableCell {...provided.dragHandleProps} className="w-10">
-                                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                                <TableCell {...provided.dragHandleProps} className="w-10 cursor-move">
+                                  <GripVertical className="w-4 h-4 text-muted-foreground mx-auto" />
                                 </TableCell>
                       <TableCell className="text-muted-foreground">{doc?.created}</TableCell>
                       <TableCell className="text-muted-foreground">{doc?.updated}</TableCell>
